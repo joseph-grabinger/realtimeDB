@@ -24,6 +24,7 @@ class MonitorSelectionScreenState extends State<MonitorSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('building monitor selection screen');
     return Column(
       children: [
         const Text(

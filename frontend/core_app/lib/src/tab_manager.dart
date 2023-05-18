@@ -58,10 +58,12 @@ class TabManager {
     tabController.animateTo(tabInfo.value.length-1);
   }
 
-  Widget pageBuilder(context, index) => TabPage(tabManager: this);
+  Widget pageBuilder(context, index) {
+    return TabPage(tabManager: this);
+  }
 
   Widget tabBuilder(context, index) => Tab(
-    child: Container(
+    child: SizedBox(
       height: 40,
       width: double.infinity,
       child: Padding(
@@ -135,7 +137,7 @@ class TabPageState extends State<TabPage> with AutomaticKeepAliveClientMixin {
             tabManager: widget.tabManager,
           ),
           MonitorScreen(
-            projectString: projectString!,
+            projectString: projectString ?? 'default',
           ),
         ],
       ),

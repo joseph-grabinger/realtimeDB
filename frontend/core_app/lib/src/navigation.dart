@@ -102,7 +102,7 @@ class SideBar extends StatelessWidget {
                     child: RotatedBox(
                       quarterTurns: -1,
                       child: Text(
-                        "Dunef Database Interface",
+                        "Realtime Database Interface",
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(fontSize: 20),
@@ -144,7 +144,7 @@ class MainWindowState extends State<MainWindow>
 
   @override
   Widget build(BuildContext context) {
-    widget.tabManager.init(this, widget.tabManager.initPosition!); //TODO DEBUG only
+    widget.tabManager.init(this, widget.tabManager.initPosition ?? 0); //TODO DEBUG only
     return ValueListenableBuilder<List<String>>(
       valueListenable: widget.tabManager.tabInfo,
       builder: (BuildContext context, List<String> value, Widget? child) {
@@ -175,8 +175,7 @@ class MainWindowState extends State<MainWindow>
                 controller: widget.tabManager.tabController,
                 physics: const NeverScrollableScrollPhysics(),
                 children: List.generate(
-                  value.length,
-                      (index) => widget.tabManager.pageBuilder(context, index),
+                  value.length, (index) => widget.tabManager.pageBuilder(context, index),
                 ),
               ),
             ),
