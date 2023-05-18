@@ -1,25 +1,25 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:realtime_database/database_reference.dart';
+import 'package:core_api/database_reference.dart';
 
 import 'node_container.dart';
 
 class DataNode extends StatefulWidget {
-  DataNode({
-    Key key,
-    @required this.dataIt,
-    @required this.dbRef,
-  }) : super(key: key);
+  const DataNode({
+    required this.dataIt,
+    required this.dbRef,
+    super.key,
+  });
 
   final Iterable<MapEntry<dynamic, dynamic>> dataIt;
   final DatabaseReference dbRef;
 
   @override
-  _DataNodeState createState() => _DataNodeState();
+  DataNodeState createState() => DataNodeState();
 }
 
-class _DataNodeState extends State<DataNode> {
+class DataNodeState extends State<DataNode> {
   List<int> depthLst = [];
   List<Iterable<MapEntry<dynamic, dynamic>>> childData = [];
   List<bool> maximizedLst = [];
@@ -28,36 +28,33 @@ class _DataNodeState extends State<DataNode> {
   @override
   void initState() {
     super.initState();
-    widget.dataIt.forEach((element) {
+    for (var _ in widget.dataIt) {
       maximizedLst.add(true);
-    });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    print("DataNode: ${widget.dataIt}");
+    debugPrint("DataNode: ${widget.dataIt}");
     childPaths.clear();
     depthLst.clear();
     childData.clear();
 
-    widget.dataIt.forEach((element) {
+    for (var element in widget.dataIt) {
       childPaths.add(getChild(element));
       depthLst.add(totalDepth(element));
       childData.add(genChildData(element));
-    });
+    }
 
-    print("Childdata : $childData");
+    debugPrint("Childdata : $childData");
 
     return Padding(
       padding: const EdgeInsets.only(left: 10.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: List.generate(
-          widget.dataIt.length, (index) {
+          widget.dataIt.length, (int index) {
 
-          //print(widget.dataIt);
-          //print(depthLst);
-          //print(childData);
 
           return Stack(
             alignment: Alignment.center,
@@ -72,7 +69,7 @@ class _DataNodeState extends State<DataNode> {
                         Container(
                           height: 20,
                           width: 20,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             border: Border(
                               left: BorderSide(color: Colors.black),
                               bottom: BorderSide(color: Colors.black),
@@ -85,13 +82,13 @@ class _DataNodeState extends State<DataNode> {
                               ? 26.0
                               : 26.0 + (depthLst[index]-1) * 50.0,
                           width: 20,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             border: Border(
                               left: BorderSide(color: Colors.black),
                             ),
                           ),
                         )
-                            : Container(
+                            : SizedBox(
                           height: depthLst[index]-2 < 0 || !maximizedLst[index]
                               ? 26.0
                               : 26.0 + (depthLst[index]-1) * 50.0,

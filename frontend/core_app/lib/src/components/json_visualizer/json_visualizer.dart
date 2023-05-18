@@ -1,34 +1,31 @@
 import 'dart:collection';
 import 'dart:convert';
 
-import 'package:dunef_db/src/components/json_visualizer/root_node.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
-import 'package:realtime_database/database_reference.dart';
-import 'package:realtime_database/realtime_database.dart';
+import 'package:core_api/database_reference.dart';
 
 import 'data_node.dart';
+import 'root_node.dart';
 
 
 class JsonVisualizer extends StatefulWidget {
-  JsonVisualizer({
-    Key key,
-    @required this.snapshot,
-    @required this.dbRef,
-  }) : super(key: key);
+  const JsonVisualizer({
+    required this.snapshot,
+    required this.dbRef,
+    super.key,
+  });
 
   final AsyncSnapshot<dynamic> snapshot;
   final DatabaseReference dbRef;
 
   @override
-  _JsonVisualizerState createState() => _JsonVisualizerState();
+  JsonVisualizerState createState() => JsonVisualizerState();
 }
 
-class _JsonVisualizerState extends State<JsonVisualizer> {
-  ScrollController _scrollController = ScrollController();
+class JsonVisualizerState extends State<JsonVisualizer> {
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -39,11 +36,11 @@ class _JsonVisualizerState extends State<JsonVisualizer> {
 
   @override
   Widget build(BuildContext context) {
-    print("JSON-Visualizer: Build Called!");
+    debugPrint("JSON-Visualizer: Build Called!");
     if (widget.snapshot.hasData) {
       LinkedHashMap map = widget.snapshot.data;
 
-      print(map);
+      debugPrint(map.toString());
 
       Map mapBody = jsonDecode(jsonEncode(map));
 
@@ -53,7 +50,7 @@ class _JsonVisualizerState extends State<JsonVisualizer> {
           controller: _scrollController,
           isAlwaysShown: true,
           child: RawKeyboardListener(
-            focusNode: new FocusNode(),
+            focusNode: FocusNode(),
             onKey: (RawKeyEvent event) async {
               if (event.logicalKey == LogicalKeyboardKey.escape) {
                 FocusScope.of(context).unfocus();

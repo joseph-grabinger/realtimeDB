@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:realtime_database/database_reference.dart';
+
+import 'package:core_api/database_reference.dart';
 
 class DeleteDialog extends StatelessWidget {
-  const DeleteDialog({Key key, @required this.dbRef}) : super(key: key);
-
   final DatabaseReference dbRef;
+
+  const DeleteDialog({required this.dbRef, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,17 +16,17 @@ class DeleteDialog extends StatelessWidget {
       ),
       title: Row(
         children: [
-          Text("Delete Data"),
-          Spacer(),
+          const Text("Delete Data"),
+          const Spacer(),
           IconButton(
-            icon: Icon(CupertinoIcons.xmark),
+            icon: const Icon(CupertinoIcons.xmark),
             onPressed: () {
               Navigator.of(context).pop();
             },
           ),
         ],
       ),
-      content: Container(
+      content: SizedBox(
         height: 140,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,7 +40,7 @@ class DeleteDialog extends StatelessWidget {
                     CupertinoIcons.exclamationmark_triangle_fill,
                     color: Colors.red.shade900,
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Text(
                     "All data at this location, including nested data, will be deleted",
                     style: TextStyle(color: Colors.red.shade900),
@@ -47,17 +48,17 @@ class DeleteDialog extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               "Storage location of data",
               style: TextStyle(color: Colors.grey.shade600),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text("/${dbRef.path}"),
           ],
         ),
       ),
-      actionsPadding: EdgeInsets.only(left: 50),
+      actionsPadding: const EdgeInsets.only(left: 50),
       actions: [
         CupertinoButton(
             child: Container(
@@ -67,7 +68,7 @@ class DeleteDialog extends StatelessWidget {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(7),
               ),
-              child: Center(
+              child: const Center(
                 child: Text(
                   "Cancel",
                   style: TextStyle(color: Colors.black),
@@ -86,7 +87,7 @@ class DeleteDialog extends StatelessWidget {
               color: Colors.red,
               borderRadius: BorderRadius.circular(7),
             ),
-            child: Center(
+            child: const Center(
               child: Text("Delete",
                 style: TextStyle(color: Colors.white),
               ),

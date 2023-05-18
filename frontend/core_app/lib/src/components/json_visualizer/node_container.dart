@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
-import 'package:realtime_database/database_reference.dart';
+import 'package:core_api/database_reference.dart';
+
 import 'package:core_app/src/components/json_visualizer/dialogs/delete_dialog.dart';
 
 
@@ -20,17 +21,16 @@ class NodeContainer extends StatefulWidget {
   final DatabaseReference dbRef;
 
   @override
-  _NodeContainerState createState() => _NodeContainerState();
+  NodeContainerState createState() => NodeContainerState();
 }
 
-class _NodeContainerState extends State<NodeContainer> {
+class NodeContainerState extends State<NodeContainer> {
   bool _hovering = false;
 
-  TextEditingController _textController;
-  FocusNode _focusNode;
-  FocusNode _focusNodeKey;
-  ValueNotifier<String> _text;
-  String _oldText;
+  late TextEditingController _textController;
+  late FocusNode _focusNode, _focusNodeKey;
+  late ValueNotifier<String> _text;
+  late String _oldText;
 
 
   @override
@@ -89,10 +89,8 @@ class _NodeContainerState extends State<NodeContainer> {
                   widget.depth > 1
                       ? widget.data.key
                       : "${widget.data.key} : ${widget.data.value}",
-                )
-                    : Container(),
-                (_hovering  || _focusNode.hasFocus) && !(widget.depth > 1)
-                    ? Row(
+                ) : Container(),
+                (_hovering  || _focusNode.hasFocus) && !(widget.depth > 1) ? Row(
                   children: [
                     Text(
                       widget.depth > 1
@@ -103,8 +101,8 @@ class _NodeContainerState extends State<NodeContainer> {
                       padding: const EdgeInsets.only(left: 5.0),
                       child: ValueListenableBuilder(
                         valueListenable: _text,
-                        builder: (BuildContext context, String text, Widget child) {
-                          return Container(
+                        builder: (BuildContext context, String text, Widget? child) {
+                          return SizedBox(
                             width: getTextSize(text) + 50,
                             child: TextField(
                               maxLines: 1,
@@ -141,10 +139,8 @@ class _NodeContainerState extends State<NodeContainer> {
                       ),
                     ),
                   ],
-                )
-                    : Container(),
-                _hovering
-                    ? Row(
+                ) : Container(),
+                _hovering ? Row(
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(left: 7.0),
@@ -181,8 +177,7 @@ class _NodeContainerState extends State<NodeContainer> {
                       onPressed: _onDelete,
                     ),
                   ],
-                )
-                    : Container(),
+                ) : Container(),
               ],
             ),
           ),
@@ -200,8 +195,8 @@ class _NodeContainerState extends State<NodeContainer> {
   void _onSubmitted(String val) async {
     dynamic castedVal = castType(val);
     widget.dbRef.update(castedVal);
-    print(val);
-    print("castedVal: $castedVal");
+    debugPrint(val);
+    debugPrint("castedVal: $castedVal");
     await Future.delayed(const Duration(milliseconds: 500));
     setState(() {
       _hovering = false;
