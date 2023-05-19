@@ -6,6 +6,7 @@ import (
 
 // Handler is an interface to the HTTP handler functions.
 type Handler interface {
+	GetAllProjects(c *gin.Context)
 	CreateProject(c *gin.Context)
 	ReadProject(c *gin.Context)
 	DeleteProject(c *gin.Context)
@@ -17,6 +18,8 @@ type Handler interface {
 
 func SetRoutes(engine *gin.Engine, h Handler) {
 	api := engine.Group("/api")
+
+	api.GET("/", h.GetAllProjects)
 
 	api.GET("/:project", h.ReadProject)
 	api.POST("/:project", h.CreateProject)

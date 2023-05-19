@@ -57,6 +57,12 @@ func (p *Postgres) TranslateError(err error) *TranslatedError {
 	return NewTranslatedError(http.StatusInternalServerError, errors.New("internal server error"))
 }
 
+func (p *Postgres) GetAllProjects() ([]byte, error) {
+	byt := []byte{}
+	err := p.db.QueryRow("SELECT json_build_array(project) FROM trees").Scan(&byt)
+	return byt, err
+}
+
 func (p *Postgres) CreateProject(projectName string, data []byte) error {
 	_, err := p.db.Exec("INSERT INTO trees (project, data) VALUES ($1, $2)", projectName, data)
 	return err

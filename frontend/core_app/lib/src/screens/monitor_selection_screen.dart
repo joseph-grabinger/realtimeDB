@@ -27,8 +27,7 @@ class MonitorSelectionScreenState extends State<MonitorSelectionScreen> {
     print('building monitor selection screen');
     return Column(
       children: [
-        const Text(
-          "Realtime Database Monitor",
+        const Text("Realtime Database Monitor",
           style: TextStyle(fontSize: 20),
         ),
         const Divider(),
@@ -104,8 +103,7 @@ class MonitorSelectionScreenState extends State<MonitorSelectionScreen> {
                 ),
                 child: const Padding(
                   padding: EdgeInsets.all(10.0),
-                  child: Text(
-                    "Continue",
+                  child: Text("Continue",
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
@@ -130,8 +128,7 @@ class MonitorSelectionScreenState extends State<MonitorSelectionScreen> {
               ),
               title: Padding(
                 padding: EdgeInsets.all(8.0),
-                child: Text(
-                  "Create New Project",
+                child: Text("Create New Project",
                   style: TextStyle(color: Colors.white),
                 ),
               ),
@@ -154,8 +151,7 @@ class MonitorSelectionScreenState extends State<MonitorSelectionScreen> {
               ),
               title: Padding(
                 padding: EdgeInsets.all(8.0),
-                child: Text(
-                  "Import Project",
+                child: Text("Import Project",
                   style: TextStyle(color: Colors.white),
                 ),
               ),

@@ -59,7 +59,7 @@ class JsonVisualizerState extends State<JsonVisualizer> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                RootNode(),
+                const RootNode(),
                 /*Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),

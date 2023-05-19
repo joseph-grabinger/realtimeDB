@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:core_app/src/tab_manager.dart';
@@ -185,4 +186,3 @@ class MainWindowState extends State<MainWindow>
     );
   }
 }
-

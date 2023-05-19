@@ -14,6 +14,8 @@ import (
 type Database interface {
 	TranslateError(err error) *database.TranslatedError
 
+	GetAllProjects() ([]byte, error)
+
 	CreateProject(projectName string, data []byte) error
 	DeleteProject(projectName string) error
 
@@ -47,6 +49,19 @@ func NewHandlers(datastore Database, dispatcher Dispatcher) *Handlers {
 		db:         datastore,
 		dispatcher: dispatcher,
 	}
+}
+
+func (h *Handlers) GetAllProjects(c *gin.Context) {
+	byt, err := h.db.GetAllProjects()
+	if err != nil {
+		tErr := h.db.TranslateError(err)
+		c.JSON(tErr.Code, tErr.Error())
+		return
+	}
+
+	var obj interface{}
+	json.Unmarshal(byt, &obj)
+	c.IndentedJSON(http.StatusOK, obj)
 }
 
 func (h *Handlers) CreateProject(c *gin.Context) {

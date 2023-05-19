@@ -53,10 +53,7 @@ class DataNodeState extends State<DataNode> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: List.generate(
-          widget.dataIt.length, (int index) {
-
-
-          return Stack(
+          widget.dataIt.length, (int index) => Stack(
             alignment: Alignment.center,
             children: [
               Padding(
@@ -106,12 +103,10 @@ class DataNodeState extends State<DataNode> {
                             data: widget.dataIt.elementAt(index),
                             dbRef: widget.dbRef.child(childPaths[index]),
                           ),
-                          depthLst[index] > 1 && maximizedLst[index]
-                              ? DataNode(
+                          depthLst[index] > 1 && maximizedLst[index] ? DataNode(
                             dataIt: childData[index],
                             dbRef: widget.dbRef.child(childPaths[index]),
-                          )
-                              : Container(),
+                          ) : Container(),
                         ],
                       ),
                     ),
@@ -120,8 +115,7 @@ class DataNodeState extends State<DataNode> {
               ),
               collapseButton(index),
             ],
-          );
-        },
+          ),
         ),
       ),
     );
@@ -169,7 +163,6 @@ class DataNodeState extends State<DataNode> {
   /// generates child data of given [data]
   Iterable<MapEntry<dynamic, dynamic>> genChildData(MapEntry<dynamic, dynamic> data) {
     if (data.value is List) {
-      //print("isList");
       return Iterable.generate(data.value.length, (index) {
         return MapEntry(
           data.value[index].keys.first,
@@ -199,8 +192,6 @@ class DataNodeState extends State<DataNode> {
 
   /// returns total depth of given [data]
   int totalDepth(dynamic data) {
-    //print("TotalD: $data");
-
     int c = 0;
     if (data is Map) {
       //print("map");
