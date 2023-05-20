@@ -113,9 +113,9 @@ class NodeContainerState extends State<NodeContainer> {
                               },
                               onTap: () async {
                                 if (!_focusNode.hasFocus) {
-                                  _focusNode.ancestors.forEach((element) {
+                                  for (var element in _focusNode.ancestors) {
                                     element.unfocus();
-                                  });
+                                  }
                                   WidgetsBinding.instance
                                       .addPostFrameCallback((_) => _focusNode.requestFocus());
                                 }
@@ -188,8 +188,8 @@ class NodeContainerState extends State<NodeContainer> {
 
   void _onDelete() {
     showDialog(
-        context: context,
-        builder: (context) => DeleteDialog(dbRef: widget.dbRef));
+      context: context,
+      builder: (context) => DeleteDialog(dbRef: widget.dbRef));
   }
 
   void _onSubmitted(String val) async {

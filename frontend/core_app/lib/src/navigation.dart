@@ -1,10 +1,10 @@
-import 'package:core_app/src/models.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:core_app/src/tab_manager.dart';
+import 'models.dart';
+import 'tab_manager.dart';
 
 
 class Navigation extends StatelessWidget {

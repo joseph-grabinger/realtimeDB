@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '/src/models.dart';
+import 'models.dart';
 import 'screens/monitor_selection_screen.dart';
 import 'screens/monitor_screen.dart';
 

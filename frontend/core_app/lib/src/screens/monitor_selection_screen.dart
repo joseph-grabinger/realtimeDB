@@ -25,7 +25,7 @@ class MonitorSelectionScreen extends StatefulWidget {
 }
 
 class MonitorSelectionScreenState extends State<MonitorSelectionScreen> {
-  List<String> projects = [];
+  List<String>? projects;
   String? _value;
 
   @override
@@ -34,7 +34,6 @@ class MonitorSelectionScreenState extends State<MonitorSelectionScreen> {
 
     RealtimeDatabase.getProjects().then((List<String> data) => setState(() {
       projects = data;
-      print('data: $data');
     }));
   }
 
@@ -54,48 +53,33 @@ class MonitorSelectionScreenState extends State<MonitorSelectionScreen> {
             ),
           ],
         ),
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              _value = "Project 1";
-            });
-          },
-          child: ListTile(
-            title: const Text("Project 1"),
-            leading: Radio<String>(
-              value: "Project 1",
-              groupValue: _value,
-              activeColor: Theme.of(context).primaryColor,
-              onChanged: (String? value) {
-                setState(() {
-                  _value = value;
-                });
-              },
-            ),
-          ),
+        projects == null ? const Center(child: CircularProgressIndicator()) : ListView(
+          shrinkWrap: true,
+          children: [
+            for (String project in projects!)
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _value = project;
+                  });
+                },
+                child: ListTile(
+                  title: Text(project),
+                  leading: Radio<String>(
+                    value: project,
+                    groupValue: _value,
+                    activeColor: Theme.of(context).primaryColor,
+                    onChanged: (String? value) {
+                      setState(() {
+                        _value = value;
+                      });
+                    },
+                  ),
+                ),
+              ),
+          ],
         ),
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              _value = "Project 2";
-            });
-          },
-          child: ListTile(
-            title: const Text("Project 2"),
-            leading: Radio<String>(
-              value: "Project 2",
-              groupValue: _value,
-              activeColor: Theme.of(context).primaryColor,
-              onChanged: (String? value) {
-                setState(() {
-                  _value = value;
-                });
-              },
-            ),
-          ),
-        ),
-        const Spacer(),
-        Row(
+        if (projects != null) Row(
           children: [
             const Spacer(),
             CupertinoButton(

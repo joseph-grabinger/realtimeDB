@@ -59,7 +59,7 @@ func (p *Postgres) TranslateError(err error) *TranslatedError {
 
 func (p *Postgres) GetAllProjects() ([]byte, error) {
 	byt := []byte{}
-	err := p.db.QueryRow("SELECT json_build_object('projects', (SELECT json_build_array(project) FROM trees))").Scan(&byt)
+	err := p.db.QueryRow("SELECT json_build_object('projects', (SELECT json_agg(project) FROM trees))").Scan(&byt)
 	return byt, err
 }
 
