@@ -4,7 +4,8 @@ import 'dart:convert' as convert;
 
 import 'package:flutter/foundation.dart';
 
-import 'core_api.dart';
+import 'event.dart';
+import 'realtime_database.dart';
 import 'utils.dart';
 
 import 'package:web_socket_channel/web_socket_channel.dart';

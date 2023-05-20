@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
-import 'package:core_api/database_reference.dart';
+import 'package:core_api/core_api.dart';
 
 import 'package:core_app/src/components/json_visualizer/dialogs/delete_dialog.dart';
 
