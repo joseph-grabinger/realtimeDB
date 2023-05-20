@@ -1,17 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'package:core_api/core_api.dart';
+
+import '../models.dart';
 import '../tab_manager.dart';
 
 class MonitorSelectionScreen extends StatefulWidget {
   final PageController pageController;
   final void Function(String) callback;
   final TabManager tabManager;
+  final ProjectType projectType;
 
   const MonitorSelectionScreen({
     required this.pageController,
     required this.callback,
     required this.tabManager,
+    required this.projectType,
     super.key,
   });
 
@@ -20,15 +25,24 @@ class MonitorSelectionScreen extends StatefulWidget {
 }
 
 class MonitorSelectionScreenState extends State<MonitorSelectionScreen> {
+  List<String> projects = [];
   String? _value;
 
   @override
+  void initState() {
+    super.initState();
+
+    RealtimeDatabase.getProjects().then((List<String> data) => setState(() {
+      projects = data;
+    }));
+  }
+
+  @override
   Widget build(BuildContext context) {
-    print('building monitor selection screen');
     return Column(
       children: [
-        const Text("Realtime Database Monitor",
-          style: TextStyle(fontSize: 20),
+        Text(widget.projectType.displayNameLong,
+          style: const TextStyle(fontSize: 20),
         ),
         const Divider(),
         const Row(
@@ -91,8 +105,8 @@ class MonitorSelectionScreenState extends State<MonitorSelectionScreen> {
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.easeInOut,
                   );
-                  widget.tabManager.tabInfo.value[widget.tabManager.tabController.index]
-                      = "$_value - Realtime Monitor";
+                  int tabIndex = widget.tabManager.tabController.index;
+                  widget.tabManager.tabInfo.value[tabIndex].name = "$_value - ${widget.projectType.displayNameShort}";
                   widget.tabManager.tabInfo.notifyListeners();
                 }
               },
@@ -122,8 +136,7 @@ class MonitorSelectionScreenState extends State<MonitorSelectionScreen> {
                 color: Colors.grey
             ),
             child: const ListTile(
-              leading: Icon(
-                CupertinoIcons.arrow_2_circlepath,
+              leading: Icon(CupertinoIcons.arrow_2_circlepath,
                 color: Colors.white,
               ),
               title: Padding(
@@ -145,8 +158,7 @@ class MonitorSelectionScreenState extends State<MonitorSelectionScreen> {
                 color: Colors.grey
             ),
             child: const ListTile(
-              leading: Icon(
-                CupertinoIcons.arrow_2_circlepath,
+              leading: Icon(CupertinoIcons.arrow_2_circlepath,
                 color: Colors.white,
               ),
               title: Padding(

@@ -1,13 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '/src/models.dart';
 import 'screens/monitor_selection_screen.dart';
 import 'screens/monitor_screen.dart';
 
 class TabManager {
   late TickerProvider _vsync;
 
-  ValueNotifier<List<String>> tabInfo = ValueNotifier([]);
+  ValueNotifier<List<Project>> tabInfo = ValueNotifier([]);
 
   int? initPosition;
 
@@ -39,12 +40,14 @@ class TabManager {
     tabInfo.notifyListeners();
   }
 
-  void addTab(String text) {
-    if (tabInfo.value.contains(text)) {
-      tabInfo.value.add(text + tabInfo.value.length.toString());
-    } else {
-      tabInfo.value.add(text);
+  void addTab(Project project) {
+    bool nameExists = tabInfo.value.any(
+      (Project p) => p.name.contains(project.name));
+
+    if (nameExists) {
+      project.name += tabInfo.value.length.toString();
     }
+    tabInfo.value.add(project);
 
     tabController = TabController(
       vsync: _vsync,
@@ -59,7 +62,7 @@ class TabManager {
   }
 
   Widget pageBuilder(context, index) {
-    return TabPage(tabManager: this);
+    return TabPage(tabManager: this, projectType: tabInfo.value[index].type);
   }
 
   Widget tabBuilder(context, index) => Tab(
@@ -74,8 +77,7 @@ class TabManager {
               fit: FlexFit.tight,
               child: Padding(
                 padding: const EdgeInsets.all(5.0),
-                child: Text(
-                  tabInfo.value[index],
+                child: Text(tabInfo.value[index].name,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
@@ -102,9 +104,14 @@ class TabManager {
 }
 
 class TabPage extends StatefulWidget {
-  const TabPage({required this.tabManager, super.key});
-
   final TabManager tabManager;
+  final ProjectType projectType;
+
+  const TabPage({
+    required this.tabManager, 
+    required this.projectType,
+    super.key,
+  });
 
   @override
   TabPageState createState() => TabPageState();
@@ -135,9 +142,12 @@ class TabPageState extends State<TabPage> with AutomaticKeepAliveClientMixin {
               });
             },
             tabManager: widget.tabManager,
+            projectType: widget.projectType,
           ),
           MonitorScreen(
-            projectString: projectString ?? 'default',
+            project: projectString != null 
+              ? Project(projectString!, widget.projectType) 
+              : Project('default', widget.projectType),
           ),
         ],
       ),

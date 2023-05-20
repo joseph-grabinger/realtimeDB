@@ -13,7 +13,7 @@ class CoreApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Dunef Database Interface',
+      title: 'Realtime Database Interface',
       theme: ThemeData(
         primaryColor: Colors.purple[600],
       ),

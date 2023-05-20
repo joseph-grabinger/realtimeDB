@@ -1,3 +1,4 @@
+import 'package:core_app/src/models.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -44,8 +45,7 @@ class SideBar extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.only(top:8.0),
                 child: Center(
-                  child: SvgPicture.asset(
-                    'assets/dunef_logo_black.svg',
+                  child: SvgPicture.asset('assets/dunef_logo_black.svg',
                     color: Colors.blueGrey,
                   ),
                 ),
@@ -64,9 +64,10 @@ class SideBar extends StatelessWidget {
                     IconButton(
                       icon: const Icon(Icons.storage_rounded),
                       tooltip: "Realtime Database",
-                      onPressed: () {
-                        tabManager.addTab("New Realtime Database Monitor");
-                      },
+                      onPressed: () => tabManager.addTab(Project(
+                        "New Realtime Database Monitor",
+                        ProjectType.realtimeDatabase,
+                      )),
                     ),
                     IconButton(
                       icon: const Icon(CupertinoIcons.folder),
@@ -146,9 +147,9 @@ class MainWindowState extends State<MainWindow>
   @override
   Widget build(BuildContext context) {
     widget.tabManager.init(this, widget.tabManager.initPosition ?? 0); //TODO DEBUG only
-    return ValueListenableBuilder<List<String>>(
+    return ValueListenableBuilder<List<Project>>(
       valueListenable: widget.tabManager.tabInfo,
-      builder: (BuildContext context, List<String> value, Widget? child) {
+      builder: (BuildContext context, List<Project> value, Widget? child) {
         if (value.isEmpty) return Container();
 
         return Column(
