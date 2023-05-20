@@ -1,5 +1,6 @@
 
 import 'dart:async';
+import 'dart:convert' as convert;
 
 import 'package:flutter/foundation.dart';
 
@@ -8,7 +9,7 @@ import 'utils.dart';
 
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert' as convert;
+
 
 class Query {
   Query({required this.pathComponents, required this.database});
@@ -19,11 +20,11 @@ class Query {
   /// Slash-delimited path representing the database location of this query.
   String get path => pathComponents.join('/');
 
-  static const String _baseUrl = "http://localhost:5001/api/";
-  static const String _wsBaseUrl = "ws://localhost:5001/ws/";
+  static const String baseUrl = "http://localhost:5001/api/";
+  static const String wsBaseUrl = "ws://localhost:5001/ws/";
 
-  Uri get _url => Uri.parse('$_baseUrl${database.project}/$path');
-  Uri get _wsUrl => Uri.parse('$_wsBaseUrl${database.project}/$path');
+  Uri get _url => Uri.parse('$baseUrl${database.project}/$path');
+  Uri get _wsUrl => Uri.parse('$wsBaseUrl${database.project}/$path');
 
   /// Gets the most up-to-date result for this query and returns as native type.
   Future<dynamic> get() async {

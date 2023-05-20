@@ -34,6 +34,7 @@ class MonitorSelectionScreenState extends State<MonitorSelectionScreen> {
 
     RealtimeDatabase.getProjects().then((List<String> data) => setState(() {
       projects = data;
+      print('data: $data');
     }));
   }
 
