@@ -1,12 +1,18 @@
+import 'package:core_api/core_api.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:core_api/core_api.dart';
+class CreateProjectDialog extends StatefulWidget {
+  const CreateProjectDialog({super.key});
 
-class DeleteDialog extends StatelessWidget {
-  final DatabaseReference dbRef;
+  @override
+  State<CreateProjectDialog> createState() => _CreateProjectDialogState();
+}
 
-  const DeleteDialog({required this.dbRef, super.key});
+class _CreateProjectDialogState extends State<CreateProjectDialog> {
+  final _formKey = GlobalKey<FormState>();
+
+  String? projectName;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +22,7 @@ class DeleteDialog extends StatelessWidget {
       ),
       title: Row(
         children: [
-          const Text("Delete Data"),
+          const Text("Create Project"),
           const Spacer(),
           IconButton(
             icon: const Icon(CupertinoIcons.xmark),
@@ -26,35 +32,18 @@ class DeleteDialog extends StatelessWidget {
           ),
         ],
       ),
-      content: SizedBox(
-        height: 140,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              color: Colors.red.shade50,
-              padding: const EdgeInsets.all(15),
-              child: Row(
-                children: [
-                  Icon(
-                    CupertinoIcons.exclamationmark_triangle_fill,
-                    color: Colors.red.shade900,
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    "All data at this location, including nested data, will be deleted",
-                    style: TextStyle(color: Colors.red.shade900),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text("Storage location of data",
-              style: TextStyle(color: Colors.grey.shade600),
-            ),
-            const SizedBox(height: 10),
-            Text("/${dbRef.path}"),
-          ],
+      content: Form(
+        key: _formKey,
+        child: TextFormField(
+          decoration: const InputDecoration(
+            labelText: 'Project name',
+            border: OutlineInputBorder(),
+          ),
+          onChanged: (String value) => projectName = value,
+          validator: (String? value) {
+            if (value == null || value.isEmpty) return 'Project name must not be empty';
+            return null;
+          },
         ),
       ),
       actionsPadding: const EdgeInsets.only(left: 50),
@@ -82,21 +71,24 @@ class DeleteDialog extends StatelessWidget {
             width: 100,
             height: 35,
             decoration: BoxDecoration(
-              color: Colors.red,
+              color: Theme.of(context).primaryColor,
               borderRadius: BorderRadius.circular(7),
             ),
             child: const Center(
-              child: Text("Delete",
+              child: Text("Create",
                 style: TextStyle(color: Colors.white),
               ),
             ),
           ),
-          onPressed: () {
-            dbRef.remove();
-            Navigator.of(context).pop();
+          onPressed: () async {
+            if (!_formKey.currentState!.validate()) return;
+
+            await RealtimeDatabase.createProject(projectName!).then(
+              (_) => Navigator.of(context).pop(projectName));
           },
         ),
       ],
     );
   }
 }
+

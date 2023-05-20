@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:core_api/core_api.dart';
 
+import '../dialogs/create_project_dialog.dart';
 import '../models.dart';
 import '../tab_manager.dart';
 
@@ -85,14 +86,7 @@ class MonitorSelectionScreenState extends State<MonitorSelectionScreen> {
             CupertinoButton(
               onPressed: () {
                 if (_value != null) {
-                  widget.callback(_value!);
-                  widget.pageController.nextPage(
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                  );
-                  int tabIndex = widget.tabManager.tabController.index;
-                  widget.tabManager.tabInfo.value[tabIndex].name = "$_value - ${widget.projectType.displayNameShort}";
-                  widget.tabManager.tabInfo.notifyListeners();
+                  selectProject(_value!);
                 }
               },
               child: Container(
@@ -112,7 +106,16 @@ class MonitorSelectionScreenState extends State<MonitorSelectionScreen> {
         ),
         const Spacer(),
         CupertinoButton(
-          onPressed: () {},
+          onPressed: () async {
+            String? projectName = await showDialog(
+              context: context,
+              builder: (context) => const CreateProjectDialog(),
+            );
+
+            if (projectName != null) {
+              selectProject(projectName);
+            }
+          },
           child: Container(
             width: double.infinity,
             height: 50,
@@ -157,5 +160,16 @@ class MonitorSelectionScreenState extends State<MonitorSelectionScreen> {
         ),
       ],
     );
+  }
+
+  void selectProject(String projectName) {
+    widget.callback(projectName);
+    widget.pageController.nextPage(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+    int tabIndex = widget.tabManager.tabController.index;
+    widget.tabManager.tabInfo.value[tabIndex].name = "$projectName - ${widget.projectType.displayNameShort}";
+    widget.tabManager.tabInfo.notifyListeners();
   }
 }

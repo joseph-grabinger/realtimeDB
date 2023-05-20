@@ -189,7 +189,8 @@ class NodeContainerState extends State<NodeContainer> {
   void _onDelete() {
     showDialog(
       context: context,
-      builder: (context) => DeleteDialog(dbRef: widget.dbRef));
+      builder: (context) => DeleteDialog(dbRef: widget.dbRef),
+    );
   }
 
   void _onSubmitted(String val) async {
