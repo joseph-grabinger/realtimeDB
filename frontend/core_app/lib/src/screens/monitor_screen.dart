@@ -6,36 +6,46 @@ import '/src/models.dart';
 import '/src/components/json_visualizer/json_visualizer.dart';
 
 
-class MonitorScreen extends StatelessWidget {
+class MonitorScreen extends StatefulWidget {
   final Project project;
 
-  MonitorScreen({
+  const MonitorScreen({
     required this.project,
     super.key,
   });
 
+  @override
+  State<MonitorScreen> createState() => _MonitorScreenState();
+}
 
-  final rdb = RealtimeDatabase("todo"); // TODO: get project from projectString
+class _MonitorScreenState extends State<MonitorScreen> {
+  RealtimeDatabase? rdb; 
 
+  @override
+  void initState() {
+    super.initState();
+
+    rdb = RealtimeDatabase(widget.project.name);
+  }
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text("Realtime Database Monitor - ${project.name}",
+        Text("${widget.project.type.displayNameLong} - ${widget.project.name}",
           style: const TextStyle(fontSize: 20),
         ),
         const Divider(),
-        Expanded(
+        rdb != null ? Expanded(
           child: StreamBuilder(
-            stream: rdb.reference().onValue(),
+            stream: rdb!.reference().onValue(),
               builder: (context, AsyncSnapshot<dynamic> snapshot) {
                 return JsonVisualizer(
                   snapshot: snapshot,
-                  dbRef: rdb.reference(),
+                  dbRef: rdb!.reference(),
                 );
               },
           ),
-        ),
+        ) : Container(),
       ],
     );
   }
