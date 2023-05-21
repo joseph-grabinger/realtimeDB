@@ -15,7 +15,7 @@ extension ProjectTypeExtension on ProjectType {
   String get displayNameLong {
     switch (this) {
       case ProjectType.realtimeDatabase:
-        return "Realtime Database Montior";
+        return "Realtime Database Monitor";
       case ProjectType.fileStorage:
         return "File Storage Explorer";
     }

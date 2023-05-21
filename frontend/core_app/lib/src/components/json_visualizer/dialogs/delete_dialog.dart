@@ -44,8 +44,7 @@ class DeleteDialog extends StatelessWidget {
                     color: Colors.red.shade900,
                   ),
                   const SizedBox(width: 10),
-                  Text(
-                    "All data at this location, including nested data, will be deleted",
+                  Text("All data at this location, including nested data, will be deleted",
                     style: TextStyle(color: Colors.red.shade900),
                   ),
                 ],

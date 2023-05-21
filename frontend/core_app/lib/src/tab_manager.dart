@@ -145,9 +145,10 @@ class TabPageState extends State<TabPage> with AutomaticKeepAliveClientMixin {
             projectType: widget.projectType,
           ),
           MonitorScreen(
-            project: projectString != null 
+            project: projectString != null
               ? Project(projectString!, widget.projectType) 
               : Project('default', widget.projectType),
+            tabManager: widget.tabManager,
           ),
         ],
       ),
