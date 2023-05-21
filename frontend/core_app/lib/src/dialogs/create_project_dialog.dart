@@ -1,6 +1,7 @@
-import 'package:core_api/core_api.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import 'package:core_api/core_api.dart';
 
 class CreateProjectDialog extends StatefulWidget {
   const CreateProjectDialog({super.key});
@@ -67,6 +68,7 @@ class _CreateProjectDialogState extends State<CreateProjectDialog> {
             },
         ),
         CupertinoButton(
+          onPressed: _onCreateProjectPressed,
           child: Container(
             width: 100,
             height: 35,
@@ -80,15 +82,15 @@ class _CreateProjectDialogState extends State<CreateProjectDialog> {
               ),
             ),
           ),
-          onPressed: () async {
-            if (!_formKey.currentState!.validate()) return;
-
-            await RealtimeDatabase.createProject(projectName!).then(
-              (_) => Navigator.of(context).pop(projectName));
-          },
         ),
       ],
     );
   }
-}
 
+  Future<void> _onCreateProjectPressed() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    await RealtimeDatabase.createProject(projectName!, {}).then(
+      (_) => Navigator.of(context).pop(projectName));
+  }
+}

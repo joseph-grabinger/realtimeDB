@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:core_api/core_api.dart';
 
 import '../dialogs/create_project_dialog.dart';
+import '../dialogs/import_project_dialog.dart';
 import '../models.dart';
 import '../tab_manager.dart';
 
@@ -137,7 +138,16 @@ class MonitorSelectionScreenState extends State<MonitorSelectionScreen> {
           ),
         ),
         CupertinoButton(
-          onPressed: () {},
+          onPressed: () async {
+            String? projectName = await showDialog(
+              context: context,
+              builder: (context) => const ImportProjectDialog(),
+            );
+
+            if (projectName != null) {
+              selectProject(projectName);
+            }
+          },
           child: Container(
             width: double.infinity,
             height: 50,

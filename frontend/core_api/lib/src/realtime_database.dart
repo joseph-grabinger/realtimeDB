@@ -35,12 +35,13 @@ class RealtimeDatabase {
     }
   }
 
-  /// Creates a new project in the database.
+  /// Creates a new project called [name] in the database.
+  /// Intial data can be provided in [value].
   /// Returns a [RealtimeDatabase] instance for the new project.
-  static Future<RealtimeDatabase> createProject(String name) async {
+  static Future<RealtimeDatabase> createProject(String name, Map value) async {
     Uri url = Uri.parse('${Query.baseUrl}$name');
 
-    var body = convert.jsonEncode({});
+    var body = convert.jsonEncode(value);
     
     http.Response response = await http.post(url, body: body);
     if (response.statusCode == 201) {
