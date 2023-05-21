@@ -72,7 +72,7 @@ class _ImportProjectDialogState extends State<ImportProjectDialog> {
                       type: FileType.custom, 
                       allowedExtensions: ['json'],
                     );
-            
+
                     if (result != null) {
                       setState(() {
                         file = File(result.files.single.path!);

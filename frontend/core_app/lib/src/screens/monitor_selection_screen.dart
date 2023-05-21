@@ -55,31 +55,34 @@ class MonitorSelectionScreenState extends State<MonitorSelectionScreen> {
             ),
           ],
         ),
-        projects == null ? const Center(child: CircularProgressIndicator()) : ListView(
-          shrinkWrap: true,
-          children: [
-            for (String project in projects!)
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _value = project;
-                  });
-                },
-                child: ListTile(
-                  title: Text(project),
-                  leading: Radio<String>(
-                    value: project,
-                    groupValue: _value,
-                    activeColor: Theme.of(context).primaryColor,
-                    onChanged: (String? value) {
-                      setState(() {
-                        _value = value;
-                      });
-                    },
+        projects == null ? const Center(child: CircularProgressIndicator()) : ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 375.0),
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              for (String project in projects!)
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _value = project;
+                    });
+                  },
+                  child: ListTile(
+                    title: Text(project),
+                    leading: Radio<String>(
+                      value: project,
+                      groupValue: _value,
+                      activeColor: Theme.of(context).primaryColor,
+                      onChanged: (String? value) {
+                        setState(() {
+                          _value = value;
+                        });
+                      },
+                    ),
                   ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
         if (projects != null) Row(
           children: [

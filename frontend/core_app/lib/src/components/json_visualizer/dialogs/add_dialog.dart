@@ -3,13 +3,24 @@ import 'package:flutter/material.dart';
 
 import 'package:core_api/core_api.dart';
 
-class DeleteDialog extends StatelessWidget {
+class AddDialog extends StatefulWidget {
   final DatabaseReference dbRef;
+  final Map data;
 
-  const DeleteDialog({
+  const AddDialog({
     required this.dbRef,
+    required this.data,
     super.key,
   });
+
+  @override
+  State<AddDialog> createState() => _AddDialogState();
+}
+
+class _AddDialogState extends State<AddDialog> {
+  final _formKey = GlobalKey<FormState>();
+
+  String? key;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +30,7 @@ class DeleteDialog extends StatelessWidget {
       ),
       title: Row(
         children: [
-          const Text("Delete Data"),
+          const Text("Add Data"),
           const Spacer(),
           IconButton(
             icon: const Icon(CupertinoIcons.xmark),
@@ -34,35 +45,38 @@ class DeleteDialog extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              color: Colors.red.shade50,
-              padding: const EdgeInsets.all(15),
-              child: Row(
-                children: [
-                  Icon(
-                    CupertinoIcons.exclamationmark_triangle_fill,
-                    color: Colors.red.shade900,
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    "All data at this location, including nested data, will be deleted",
-                    style: TextStyle(color: Colors.red.shade900),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
             Text("Storage location of data",
               style: TextStyle(color: Colors.grey.shade600),
             ),
             const SizedBox(height: 10),
-            Text("/${dbRef.path}"),
+            Text("/${widget.dbRef.path}"),
+            const SizedBox(height: 20),
+            Form(
+              key: _formKey,
+              child: TextFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Key',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a key';
+                  }
+                  if (widget.data.containsKey(value)) {
+                    return 'Key already exists';
+                  }
+                  return null;
+                },
+                onChanged: (String value) => key = value,
+              ),
+            ),
           ],
         ),
       ),
       actionsPadding: const EdgeInsets.only(left: 50),
       actions: [
         CupertinoButton(
+            onPressed: Navigator.of(context).pop,
             child: Container(
               width: 100,
               height: 35,
@@ -76,26 +90,27 @@ class DeleteDialog extends StatelessWidget {
                 ),
               ),
             ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
         ),
         CupertinoButton(
           child: Container(
             width: 100,
             height: 35,
             decoration: BoxDecoration(
-              color: Colors.red,
+              color: Theme.of(context).primaryColor,
               borderRadius: BorderRadius.circular(7),
             ),
             child: const Center(
-              child: Text("Delete",
+              child: Text("Add",
                 style: TextStyle(color: Colors.white),
               ),
             ),
           ),
           onPressed: () {
-            dbRef.remove();
+            // dbRef TODO
+            if (!_formKey.currentState!.validate()) return;
+
+            widget.dbRef.child(key!).set("NULL");
+
             Navigator.of(context).pop();
           },
         ),

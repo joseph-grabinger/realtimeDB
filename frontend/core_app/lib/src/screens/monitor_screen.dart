@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:core_api/core_api.dart';
 
-import '/src/models.dart';
-import '/src/components/json_visualizer/json_visualizer.dart';
+import '../models.dart';
+import '../components/json_visualizer/json_visualizer.dart';
 
 
 class MonitorScreen extends StatefulWidget {
@@ -50,5 +50,3 @@ class _MonitorScreenState extends State<MonitorScreen> {
     );
   }
 }
-
-

@@ -5,20 +5,21 @@ import 'package:flutter/services.dart';
 
 import 'package:core_api/core_api.dart';
 
-import 'package:core_app/src/components/json_visualizer/dialogs/delete_dialog.dart';
+import 'dialogs/delete_dialog.dart';
+import 'dialogs/add_dialog.dart';
 
 
 class NodeContainer extends StatefulWidget {
+  final int depth;
+  final MapEntry<dynamic, dynamic> data;
+  final DatabaseReference dbRef;
+
   const NodeContainer({
     required this.depth,
     required this.data,
     required this.dbRef,
     super.key,
   });
-
-  final int depth;
-  final MapEntry<dynamic, dynamic> data;
-  final DatabaseReference dbRef;
 
   @override
   NodeContainerState createState() => NodeContainerState();
@@ -35,6 +36,7 @@ class NodeContainerState extends State<NodeContainer> {
 
   @override
   void initState() {
+    print("Noder: ${widget.data}, depth: ${widget.depth}");
     super.initState();
     _focusNode = FocusNode();
     _focusNodeKey = FocusNode();
@@ -92,10 +94,9 @@ class NodeContainerState extends State<NodeContainer> {
                 ) : Container(),
                 (_hovering  || _focusNode.hasFocus) && !(widget.depth > 1) ? Row(
                   children: [
-                    Text(
-                      widget.depth > 1
-                          ? widget.data.key
-                          : "${widget.data.key} :",
+                    Text(widget.depth > 1
+                      ? widget.data.key
+                      : "${widget.data.key} :",
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 5.0),
@@ -116,10 +117,9 @@ class NodeContainerState extends State<NodeContainer> {
                                   for (var element in _focusNode.ancestors) {
                                     element.unfocus();
                                   }
-                                  WidgetsBinding.instance
-                                      .addPostFrameCallback((_) => _focusNode.requestFocus());
+                                  WidgetsBinding.instance.addPostFrameCallback(
+                                    (_) => _focusNode.requestFocus());
                                 }
-
                               },
                               onSubmitted: _onSubmitted,
                               cursorColor: Colors.grey,
@@ -152,29 +152,26 @@ class NodeContainerState extends State<NodeContainer> {
                             color: Colors.grey,
                             width: 0.0,
                           ),
-                        )
-                            : null,
+                        ) : null,
                       ),
                     ),
-                    widget.depth > 1
-                        ? IconButton(
+                    widget.depth > 1 ? IconButton(
+                      onPressed: _onAdd,
                       padding: const EdgeInsets.all(0),
                       icon: const Icon(
                         CupertinoIcons.add,
                         color: Colors.black,
                         size: 15,
                       ),
-                      onPressed: () {},
-                    )
-                        : Container(),
+                    ) : Container(),
                     IconButton(
+                      onPressed: _onDelete,
                       padding: const EdgeInsets.all(0),
                       icon: const Icon(
                         CupertinoIcons.xmark,
                         color: Colors.black,
                         size: 15,
                       ),
-                      onPressed: _onDelete,
                     ),
                   ],
                 ) : Container(),
@@ -190,6 +187,16 @@ class NodeContainerState extends State<NodeContainer> {
     showDialog(
       context: context,
       builder: (context) => DeleteDialog(dbRef: widget.dbRef),
+    );
+  }
+
+  void _onAdd() {
+    showDialog(
+      context: context,
+      builder: (context) => AddDialog(
+        dbRef: widget.dbRef, 
+        data: {widget.data.key: widget.data.value},
+      ),
     );
   }
 
