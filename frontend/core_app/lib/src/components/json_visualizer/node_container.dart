@@ -36,7 +36,6 @@ class NodeContainerState extends State<NodeContainer> {
 
   @override
   void initState() {
-    print("Noder: ${widget.data}, depth: ${widget.depth}");
     super.initState();
     _focusNode = FocusNode();
     _focusNodeKey = FocusNode();

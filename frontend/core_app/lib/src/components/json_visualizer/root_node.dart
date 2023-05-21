@@ -1,9 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'package:core_api/core_api.dart';
+
+import 'dialogs/add_dialog.dart';
 
 class RootNode extends StatefulWidget {
-  const RootNode({super.key});
+    final DatabaseReference dbRef;
+
+  const RootNode({
+    required this.dbRef,
+    super.key,
+  });
 
   @override
   State<RootNode> createState() => _RootNodeState();
@@ -61,23 +69,32 @@ class _RootNodeState extends State<RootNode> {
                       color: Colors.black,
                       size: 15,
                     ),
-                    onPressed: () {},
-                  )
-                  : Container(),
-              _hovering
-                  ? IconButton(
-                padding: const EdgeInsets.all(0),
-                icon: const Icon(
-                  CupertinoIcons.xmark,
-                  color: Colors.black,
-                  size: 15,
-                ),
-                onPressed: () {},
-              )
-                  : Container(),
+                    onPressed: _onAdd,
+                  ) : Container(),
+              // _hovering
+              //     ? IconButton(
+              //   padding: const EdgeInsets.all(0),
+              //   icon: const Icon(
+              //     CupertinoIcons.xmark,
+              //     color: Colors.black,
+              //     size: 15,
+              //   ),
+              //   onPressed: () {},
+              // )
+              //     : Container(),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _onAdd() {
+    showDialog(
+      context: context,
+      builder: (context) => AddDialog(
+        dbRef: widget.dbRef, 
+        data: const {},
       ),
     );
   }

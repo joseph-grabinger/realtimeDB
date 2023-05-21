@@ -59,18 +59,9 @@ class JsonVisualizerState extends State<JsonVisualizer> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const RootNode(),
-                /*Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.grey),
-                    color: Colors.grey[300],
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text("Root"),
-                  ),
-                ),*/
+                RootNode(
+                  dbRef: widget.dbRef,
+                ),
                 DataNode(
                   dataIt: mapBody.entries,
                   dbRef: widget.dbRef,
@@ -95,5 +86,3 @@ class JsonVisualizerState extends State<JsonVisualizer> {
     }
   }
 }
-
-
