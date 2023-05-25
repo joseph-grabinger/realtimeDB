@@ -17,6 +17,7 @@ type Database interface {
 	GetAllProjects() ([]byte, error)
 
 	CreateProject(projectName string, data []byte) error
+	UpdateProject(projectName string, newName string) error
 	DeleteProject(projectName string) error
 
 	GetProjectKey(projectName string, keys ...string) ([]byte, error)
@@ -69,6 +70,20 @@ func (h *Handlers) CreateProject(c *gin.Context) {
 	b, _ := c.GetRawData()
 
 	err := h.db.CreateProject(project, b)
+	if err != nil {
+		tErr := h.db.TranslateError(err)
+		c.JSON(tErr.Code, tErr.Error())
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{})
+}
+
+func (h *Handlers) UpdateProject(c *gin.Context) {
+	project := c.Param("project")
+	b, _ := c.GetRawData()
+
+	err := h.db.UpdateProject(project, string(b))
 	if err != nil {
 		tErr := h.db.TranslateError(err)
 		c.JSON(tErr.Code, tErr.Error())

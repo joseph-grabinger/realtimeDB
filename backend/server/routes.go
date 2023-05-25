@@ -8,6 +8,7 @@ import (
 type Handler interface {
 	GetAllProjects(c *gin.Context)
 	CreateProject(c *gin.Context)
+	UpdateProject(c *gin.Context)
 	ReadProject(c *gin.Context)
 	DeleteProject(c *gin.Context)
 	ReadProjectKey(c *gin.Context)
@@ -23,6 +24,7 @@ func SetRoutes(engine *gin.Engine, h Handler) {
 
 	api.GET("/:project", h.ReadProject)
 	api.POST("/:project", h.CreateProject)
+	api.PUT("/:project", h.UpdateProject)
 	api.DELETE("/:project", h.DeleteProject)
 
 	api.GET("/:project/*keys", h.ReadProjectKey)

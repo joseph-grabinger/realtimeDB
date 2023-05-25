@@ -68,6 +68,11 @@ func (p *Postgres) CreateProject(projectName string, data []byte) error {
 	return err
 }
 
+func (p *Postgres) UpdateProject(projectName string, newName string) error {
+	_, err := p.db.Exec("UPDATE trees SET project=$1 WHERE project=$2", newName, projectName)
+	return err
+}
+
 func (p *Postgres) DeleteProject(projectName string) error {
 	_, err := p.db.Exec("DELETE FROM trees where project=$1", projectName)
 	return err

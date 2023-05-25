@@ -51,6 +51,18 @@ class RealtimeDatabase {
     }
   }
 
+  /// Updates a project s name in the database.
+  static Future<void> updateProject(String name, String newName) async {
+    Uri url = Uri.parse('${Query.baseUrl}$name');
+    
+    http.Response response = await http.put(url, body: newName);
+    if (response.statusCode == 201) {
+      return;
+    } else {
+      throw("PUT on $url exited with status code ${response.statusCode}");
+    }
+  }
+
   /// Deletes a project from the database.
   static Future<void> deleteProject(String name) async {
     Uri url = Uri.parse('${Query.baseUrl}$name');
