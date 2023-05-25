@@ -170,7 +170,6 @@ class DataNodeState extends State<DataNode> {
         );
       });
     } else if (data.value is Map) {
-      //print("isMap");
       Map m = data.value;
       return Iterable.generate(m.entries.length, (index) {
         return MapEntry(
@@ -178,14 +177,7 @@ class DataNodeState extends State<DataNode> {
           m.entries.elementAt(index).value,
         );
       });
-
-
-    } else if (data.value is! Map){
-      //print("isNotMap");
-      //print(data.value.runtimeType);
-      return [];
     } else {
-      //print("else");
       return [];
     }
   }
@@ -194,28 +186,19 @@ class DataNodeState extends State<DataNode> {
   int totalDepth(dynamic data) {
     int c = 0;
     if (data is Map) {
-      //print("map");
       for (final i in data.entries) {
         c += totalDepth(i);
       }
       return c;
-
     } else if (data is MapEntry<String, dynamic> && (data.value is String || data.value is bool || data.value is int || data.value is double)) {
-      //print("lastEntry");
       return 1;
-
     } else if (data is MapEntry) {
-      //print("mapEntry");
       return totalDepth(data.value) + 1;
-
     } else if (data is String || data is bool ||data is int || data is double) {
       return 0;
-
     } else if (data is List) {
       return data.length;
-
     } else {
-      //print("primitive");
       return 1;
     }
   }
