@@ -167,9 +167,8 @@ class MainWindowState extends State<MainWindow>
                 ),
               ),
               indicatorColor: Colors.grey,
-              tabs: List.generate(
-                value.length,
-                    (index) => widget.tabManager.tabBuilder(context, index),
+              tabs: List.generate(value.length,
+                (index) => widget.tabManager.tabBuilder(context, index),
               ),
             ),
             Expanded(

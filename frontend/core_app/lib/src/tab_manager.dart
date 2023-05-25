@@ -91,9 +91,7 @@ class TabManager {
                 color: Colors.black ,
                 size: 12,
               ),
-              onPressed: () {
-                removeTab(index);
-              },
+              onPressed: () => removeTab(index),
             ),
           ],
         ),

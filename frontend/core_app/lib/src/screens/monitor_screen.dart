@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:core_api/core_api.dart';
 
-import '../dialogs/delete_project_dialog.dart';
 import '../models.dart';
 import '../tab_manager.dart';
 import '../components/json_visualizer/json_visualizer.dart';
 import '../components/others/popup_menu.dart';
+import '../dialogs/delete_project_dialog.dart';
+import '../dialogs/rename_project_dialog.dart';
 
 
 class MonitorScreen extends StatefulWidget {
@@ -50,15 +51,19 @@ class _MonitorScreenState extends State<MonitorScreen> {
                 buildPopupMenuItem('Delete Project', Icons.delete_forever, 1, true),
               ],
               onSelected: (int value) async {
-                print(value);
-
                 if (value == 0) {
-                  // showDialog(
-                  //   context: context,
-                  //   builder: (context) => RenameDialog(
-                  //     project: widget.project,
-                  //   ),
-                  // );
+                  String? newName = await showDialog(
+                    context: context,
+                    builder: (context) => RenameProjectDialog(
+                      name: widget.project.name,
+                    ),
+                  );
+
+                  if (newName != null) {
+                    // TODO: update project name in tabmanager
+                    widget.project.name = newName;
+                    setState(() {});
+                  }
                 } else if (value == 1) {
                   bool result = await showDialog(
                     context: context,
