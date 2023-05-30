@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"realtime_database/database"
+	"realtime_database/filestorage"
 	"realtime_database/server"
 	"realtime_database/websockets"
 
@@ -33,16 +34,19 @@ func main() {
 		log.Fatalln(err)
 	}
 
+	fileStorage, err := filestorage.NewFileStorage("./storage")
+
 	dispatcher := websockets.NewDispatcher()
 	go dispatcher.Run()
 
-	httpHandler := server.NewHandlers(db, dispatcher)
+	httpRdbHandler := server.NewRdbHandlers(db, dispatcher)
+	httpFsHandler := server.NewFsHandlers(fileStorage)
 
 	wsHandler := websockets.NewHandlers(dispatcher)
 
 	router := gin.Default()
 
-	server.SetRoutes(router, httpHandler)
+	server.SetRoutes(router, httpRdbHandler, httpFsHandler)
 
 	websockets.SetRoutes(router, wsHandler)
 

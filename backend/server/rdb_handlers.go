@@ -39,20 +39,20 @@ type Action struct {
 	Data    interface{} `json:"data"`
 }
 
-// Handlers contains all handler functions
-type Handlers struct {
+// RdbHandlers contains all handler functions
+type RdbHandlers struct {
 	db         Database
 	dispatcher Dispatcher
 }
 
-func NewHandlers(datastore Database, dispatcher Dispatcher) *Handlers {
-	return &Handlers{
+func NewRdbHandlers(datastore Database, dispatcher Dispatcher) *RdbHandlers {
+	return &RdbHandlers{
 		db:         datastore,
 		dispatcher: dispatcher,
 	}
 }
 
-func (h *Handlers) GetAllProjects(c *gin.Context) {
+func (h *RdbHandlers) GetAllProjects(c *gin.Context) {
 	byt, err := h.db.GetAllProjects()
 	if err != nil {
 		tErr := h.db.TranslateError(err)
@@ -65,7 +65,7 @@ func (h *Handlers) GetAllProjects(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, obj)
 }
 
-func (h *Handlers) CreateProject(c *gin.Context) {
+func (h *RdbHandlers) CreateProject(c *gin.Context) {
 	project := c.Param("project")
 	b, _ := c.GetRawData()
 
@@ -79,7 +79,7 @@ func (h *Handlers) CreateProject(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{})
 }
 
-func (h *Handlers) UpdateProject(c *gin.Context) {
+func (h *RdbHandlers) UpdateProject(c *gin.Context) {
 	project := c.Param("project")
 	b, _ := c.GetRawData()
 
@@ -93,7 +93,7 @@ func (h *Handlers) UpdateProject(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{})
 }
 
-func (h *Handlers) ReadProject(c *gin.Context) {
+func (h *RdbHandlers) ReadProject(c *gin.Context) {
 	project := c.Param("project")
 
 	byt, err := h.db.GetProjectKey(project)
@@ -108,7 +108,7 @@ func (h *Handlers) ReadProject(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, obj)
 }
 
-func (h *Handlers) DeleteProject(c *gin.Context) {
+func (h *RdbHandlers) DeleteProject(c *gin.Context) {
 	project := c.Param("project")
 
 	err := h.db.DeleteProject(project)
@@ -121,7 +121,7 @@ func (h *Handlers) DeleteProject(c *gin.Context) {
 	c.JSON(http.StatusNoContent, gin.H{})
 }
 
-func (h *Handlers) ReadProjectKey(c *gin.Context) {
+func (h *RdbHandlers) ReadProjectKey(c *gin.Context) {
 	project := c.Param("project")
 	keys := c.Param("keys")
 
@@ -138,7 +138,7 @@ func (h *Handlers) ReadProjectKey(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, obj)
 }
 
-func (h *Handlers) CreateProjectKey(c *gin.Context) {
+func (h *RdbHandlers) CreateProjectKey(c *gin.Context) {
 	project := c.Param("project")
 	keys := c.Param("keys")
 
@@ -163,7 +163,7 @@ func (h *Handlers) CreateProjectKey(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{})
 }
 
-func (h *Handlers) UpdateProjectKey(c *gin.Context) {
+func (h *RdbHandlers) UpdateProjectKey(c *gin.Context) {
 	project := c.Param("project")
 	keys := c.Param("keys")
 
@@ -188,7 +188,7 @@ func (h *Handlers) UpdateProjectKey(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{})
 }
 
-func (h *Handlers) DeleteProjectKey(c *gin.Context) {
+func (h *RdbHandlers) DeleteProjectKey(c *gin.Context) {
 	project := c.Param("project")
 	keys := c.Param("keys")
 	keys = strings.TrimRight(strings.TrimLeft(keys, "/"), "/")
@@ -210,7 +210,7 @@ func (h *Handlers) DeleteProjectKey(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{})
 }
 
-func (h *Handlers) broadcast(typ, path, project string, b []byte) {
+func (h *RdbHandlers) broadcast(typ, path, project string, b []byte) {
 	//dispatch action
 	var rawData interface{}
 	json.Unmarshal(b, &rawData)
