@@ -26,7 +26,7 @@ func NewFileStorage(path string) (*FileStorage, error) {
 }
 
 func (fs *FileStorage) GetAllProjects() ([]string, error) {
-	entries, err := os.ReadDir("./")
+	entries, err := os.ReadDir(fs.storagePath)
 	if err != nil {
 		log.Fatal(err)
 	}

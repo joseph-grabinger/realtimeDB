@@ -20,7 +20,7 @@ class FileStorage {
     init();
   }
 
-  static const String baseUrl = "http://localhost:5001/api/filestorage";
+  static const String baseUrl = "http://localhost:5001/filestorage";
 
   String get projectUrl => '$baseUrl/$project';
 
@@ -30,6 +30,18 @@ class FileStorage {
     dioClient = Dio(BaseOptions(baseUrl: projectUrl));
   }
 
+  /// Returns a List of all projects in the storage.
+  static Future<List<String>> getProjects() async {
+    try {
+      final res = await Dio().get(baseUrl);
+      if (res.statusCode == 200) {
+        return List<String>.from(res.data);
+      }
+    } on DioError {
+      rethrow;
+    }
+    return [];
+  }
   /// Uploads files to the storage.
   Future<void> uploadFiles(List<XFile> files, path) async {
     for (XFile file in files) {

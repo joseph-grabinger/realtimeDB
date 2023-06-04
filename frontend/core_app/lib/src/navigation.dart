@@ -70,8 +70,11 @@ class SideBar extends StatelessWidget {
                   ),
                   IconButton(
                     icon: const Icon(CupertinoIcons.folder),
-                    tooltip: "Document Storage",
-                    onPressed: () {},
+                    tooltip: "File Storage",
+                    onPressed: () => tabManager.addTab(Project(
+                      "New File Storage Browser",
+                      ProjectType.fileStorage,
+                    )),
                   ),
                   IconButton(
                     icon: const Icon(CupertinoIcons.person_2),

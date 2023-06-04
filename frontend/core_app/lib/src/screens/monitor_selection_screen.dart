@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:realtime_api/realtime_api.dart';
+import 'package:filestorage_api/filestorage_api.dart';
 
 import '../dialogs/create_project_dialog.dart';
 import '../dialogs/import_project_dialog.dart';
@@ -34,9 +35,15 @@ class MonitorSelectionScreenState extends State<MonitorSelectionScreen> {
   void initState() {
     super.initState();
 
-    RealtimeDatabase.getProjects().then((List<String> data) => setState(() {
-      projects = data;
-    }));
+    if (widget.projectType == ProjectType.realtimeDatabase) {
+      RealtimeDatabase.getProjects().then((List<String> data) => setState(() {
+        projects = data;
+      }));
+    } else {
+      FileStorage.getProjects().then((List<String> data) => setState(() {
+        projects = data;
+      }));
+    }
   }
 
   @override
