@@ -19,6 +19,26 @@ func NewFileStorage(path string) (*FileStorage, error) {
 	}, nil
 }
 
+func (fs *FileStorage) GetAllProjects() ([]byte, error) {
+	// TODO: implement
+	return nil, nil
+}
+
+func (fs *FileStorage) CreateProject(projectName string) error {
+	// TODO: implement
+	return nil
+}
+
+func (fs *FileStorage) UpdateProject(projectName string, newName string) error {
+	// TODO: implement
+	return nil
+}
+
+func (fs *FileStorage) DeleteProject(projectName string) error {
+	// TODO: implement
+	return nil
+}
+
 func (fs *FileStorage) Add(addPath string, file *multipart.FileHeader) (string, error) {
 	storagePath := path.Join(fs.storagePath, addPath)
 

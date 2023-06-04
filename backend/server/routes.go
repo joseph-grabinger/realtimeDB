@@ -19,6 +19,10 @@ type RdbHandler interface {
 
 // FsHandler is an interface to the filestorage HTTP handler functions.
 type FsHandler interface {
+	GetAllProjects(c *gin.Context)
+	CreateProject(c *gin.Context)
+	UpdateProject(c *gin.Context)
+	DeleteProject(c *gin.Context)
 	Add(c *gin.Context)
 	AddFolder(c *gin.Context)
 	Rename(c *gin.Context)
@@ -44,7 +48,13 @@ func SetRoutes(engine *gin.Engine, rdbH RdbHandler, fsH FsHandler) {
 	api.PUT("/:project/*keys", rdbH.UpdateProjectKey)
 	api.DELETE("/:project/*keys", rdbH.DeleteProjectKey)
 
-	fs := api.Group("/filestorage")
+	fs := engine.Group("/filestorage")
+
+	fs.GET("/", fsH.GetAllProjects)
+
+	fs.POST("/:project", fsH.CreateProject)
+	fs.PUT("/:project", fsH.UpdateProject)
+	fs.DELETE("/:project", fsH.DeleteProject)
 
 	fs.POST("/add", fsH.Add)
 	fs.POST("/add_folder", fsH.AddFolder)

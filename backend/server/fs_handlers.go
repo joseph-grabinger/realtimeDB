@@ -12,6 +12,10 @@ import (
 )
 
 type FileStorage interface {
+	GetAllProjects() ([]byte, error)
+
+	CreateProject(projectName string) error
+
 	Add(path string, file *multipart.FileHeader) (string, error)
 	AddFolder(path, name string) error
 	Rename(filepath, newName string) error
@@ -33,8 +37,54 @@ func NewFsHandlers(storage FileStorage) *FsHandlers {
 	}
 }
 
+func (h *FsHandlers) GetAllProjects(c *gin.Context) {
+	byt, err := h.storage.GetAllProjects()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	var obj interface{}
+	json.Unmarshal(byt, &obj)
+	c.IndentedJSON(http.StatusOK, obj)
+}
+
+func (h *FsHandlers) CreateProject(c *gin.Context) {
+	project := c.Param("project")
+
+	if err := h.storage.CreateProject(project); err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusCreated, "Project created successfully")
+}
+
+func (h *FsHandlers) UpdateProject(c *gin.Context) {
+	project := c.Param("project")
+	newName := c.Query("new_name")
+
+	if err := h.storage.Rename(project, newName); err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, "Project renamed successfully")
+}
+
+func (h *FsHandlers) DeleteProject(c *gin.Context) {
+	project := c.Param("project")
+
+	if err := h.storage.Delete(project); err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, "Project deleted successfully")
+}
+
 func (h *FsHandlers) Add(c *gin.Context) {
-	path := c.PostForm("path")
+	path := c.Query("path")
 	file, err := c.FormFile("file")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
@@ -57,8 +107,8 @@ func (h *FsHandlers) Add(c *gin.Context) {
 }
 
 func (h *FsHandlers) AddFolder(c *gin.Context) {
-	path := c.PostForm("path")
-	name := c.PostForm("name")
+	path := c.Query("path")
+	name := c.Query("name")
 
 	if err := h.storage.AddFolder(path, name); err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
@@ -69,8 +119,8 @@ func (h *FsHandlers) AddFolder(c *gin.Context) {
 }
 
 func (h *FsHandlers) Rename(c *gin.Context) {
-	filepath := c.PostForm("filepath")
-	newName := c.PostForm("new_name")
+	filepath := c.Query("filepath")
+	newName := c.Query("new_name")
 
 	if err := h.storage.Rename(filepath, newName); err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
@@ -81,9 +131,9 @@ func (h *FsHandlers) Rename(c *gin.Context) {
 }
 
 func (h *FsHandlers) Move(c *gin.Context) {
-	filename := c.PostForm("filename")
-	source := c.PostForm("source")
-	destination := c.PostForm("destination")
+	filename := c.Query("filename")
+	source := c.Query("source")
+	destination := c.Query("destination")
 
 	if err := h.storage.Move(filename, source, destination); err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
@@ -94,8 +144,8 @@ func (h *FsHandlers) Move(c *gin.Context) {
 }
 
 func (h *FsHandlers) Copy(c *gin.Context) {
-	source := c.PostForm("source")
-	destination := c.PostForm("destination")
+	source := c.Query("source")
+	destination := c.Query("destination")
 
 	if err := h.storage.Copy(source, destination); err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
@@ -106,7 +156,7 @@ func (h *FsHandlers) Copy(c *gin.Context) {
 }
 
 func (h *FsHandlers) Delete(c *gin.Context) {
-	filepath := c.PostForm("filepath")
+	filepath := c.Query("filepath")
 
 	if err := h.storage.Delete(filepath); err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
