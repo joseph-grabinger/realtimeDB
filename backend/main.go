@@ -34,7 +34,10 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	fileStorage, err := filestorage.NewFileStorage("./storage")
+	fileStorage, err := filestorage.NewFileStorage("../storage-directory")
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	dispatcher := websockets.NewDispatcher()
 	go dispatcher.Run()

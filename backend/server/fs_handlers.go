@@ -12,7 +12,7 @@ import (
 )
 
 type FileStorage interface {
-	GetAllProjects() ([]byte, error)
+	GetAllProjects() ([]string, error)
 
 	CreateProject(projectName string) error
 
@@ -38,15 +38,13 @@ func NewFsHandlers(storage FileStorage) *FsHandlers {
 }
 
 func (h *FsHandlers) GetAllProjects(c *gin.Context) {
-	byt, err := h.storage.GetAllProjects()
+	projects, err := h.storage.GetAllProjects()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	var obj interface{}
-	json.Unmarshal(byt, &obj)
-	c.IndentedJSON(http.StatusOK, obj)
+	c.IndentedJSON(http.StatusOK, projects)
 }
 
 func (h *FsHandlers) CreateProject(c *gin.Context) {

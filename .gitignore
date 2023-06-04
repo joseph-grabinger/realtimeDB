@@ -1,1 +1,5 @@
+# backend ENV file
 /backend/.env
+
+# file storage directory
+/storage-directory

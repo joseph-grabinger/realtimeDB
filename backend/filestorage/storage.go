@@ -1,6 +1,7 @@
 package filestorage
 
 import (
+	"errors"
 	"log"
 	"mime/multipart"
 	"os"
@@ -14,28 +15,84 @@ type FileStorage struct {
 }
 
 func NewFileStorage(path string) (*FileStorage, error) {
+	// check if path exists
+	if _, err := os.Stat(filepath.FromSlash(path)); os.IsNotExist(err) {
+		return nil, errors.New("filestorage path does not exist")
+	}
+
 	return &FileStorage{
 		storagePath: path,
 	}, nil
 }
 
-func (fs *FileStorage) GetAllProjects() ([]byte, error) {
-	// TODO: implement
-	return nil, nil
+func (fs *FileStorage) GetAllProjects() ([]string, error) {
+	entries, err := os.ReadDir("./")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var projects []string
+	for _, e := range entries {
+		if e.IsDir() {
+			projects = append(projects, e.Name())
+		}
+	}
+
+	return projects, nil
 }
 
 func (fs *FileStorage) CreateProject(projectName string) error {
-	// TODO: implement
+	storagePath := path.Join(fs.storagePath, projectName)
+
+	// check if path exists
+	if _, err := os.Stat(filepath.FromSlash(storagePath)); !os.IsNotExist(err) {
+		return errors.New("project path already exists")
+	}
+
+	// create directory
+	if err := os.Mkdir(filepath.FromSlash(storagePath), os.ModePerm); err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func (fs *FileStorage) UpdateProject(projectName string, newName string) error {
-	// TODO: implement
+	storagePath := path.Join(fs.storagePath, projectName)
+
+	// check if path exists
+	if _, err := os.Stat(filepath.FromSlash(storagePath)); os.IsNotExist(err) {
+		return err
+	}
+
+	newPath := path.Join(fs.storagePath, newName)
+
+	// check if path exists
+	if _, err := os.Stat(filepath.FromSlash(newPath)); !os.IsNotExist(err) {
+		return errors.New("project path already exists")
+	}
+
+	// rename directory
+	if err := os.Rename(filepath.FromSlash(storagePath), filepath.FromSlash(newPath)); err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func (fs *FileStorage) DeleteProject(projectName string) error {
-	// TODO: implement
+	storagePath := path.Join(fs.storagePath, projectName)
+
+	// check if path exists
+	if _, err := os.Stat(filepath.FromSlash(storagePath)); os.IsNotExist(err) {
+		return err
+	}
+
+	// delete directory
+	if err := os.RemoveAll(filepath.FromSlash(storagePath)); err != nil {
+		return err
+	}
+
 	return nil
 }
 
