@@ -11,6 +11,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:pdfx/pdfx.dart';
 
 import '../others/popup_menu.dart';
+import 'dialogs/add_folder_dialog.dart';
 import 'file_browser_controller.dart';
 import 'model.dart';
 import 'utils.dart';
@@ -321,8 +322,8 @@ class FileBrowser extends StatelessWidget {
 
   Widget buildBackButton() => InkWell(
     onTap: () => controller.pop(),
-    child: Row(
-      children: const [
+    child: const Row(
+      children: [
         Icon(Icons.chevron_left),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 5.0),
