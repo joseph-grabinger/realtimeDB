@@ -1,4 +1,4 @@
-library core_api;
+library realtime_api;
 
 export 'src/realtime_database.dart';
 export 'src/database_reference.dart';

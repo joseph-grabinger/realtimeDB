@@ -1,5 +1,4 @@
-import 'package:core_api/core_api.dart';
-
+import '../realtime_api.dart';
 import 'query.dart';
 
 class DatabaseReference extends Query {

@@ -12,8 +12,8 @@ dependencies:
   flutter:
     sdk: flutter
 
-  core_api:
-    path: ../core_api
+  realtime_api:
+    path: ../realtime_api
 
   cupertino_icons: ^1.0.5
   flutter_svg: ^2.0.6

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:core_api/core_api.dart';
+import 'package:realtime_api/realtime_api.dart';
 
 import '../models.dart';
 import '../tab_manager.dart';

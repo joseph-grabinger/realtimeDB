@@ -1,17 +1,17 @@
-name: filestorage_api
-description: The Flutter filestorage API.
+name: realtime_api
+description: The Flutter realtimeDB API.
 version: 0.0.1
 homepage:
 
 environment:
-  sdk: '>=3.1.0-134.0.dev <4.0.0'
+  sdk: '>=3.0.0-366.0.dev <4.0.0'
   flutter: ">=1.17.0"
 
 dependencies:
-  cross_file: ^0.3.3+4
-  dio: ^5.1.2
   flutter:
     sdk: flutter
+  http: ^0.13.6
+  web_socket_channel: ^2.4.0
 
 dev_dependencies:
   flutter_test:
