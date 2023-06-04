@@ -57,35 +57,33 @@ class SideBar extends StatelessWidget {
                 minHeight: 100,
                 maxHeight: 200,
               ),
-              child: Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.storage_rounded),
-                      tooltip: "Realtime Database",
-                      onPressed: () => tabManager.addTab(Project(
-                        "New Realtime Database Monitor",
-                        ProjectType.realtimeDatabase,
-                      )),
-                    ),
-                    IconButton(
-                      icon: const Icon(CupertinoIcons.folder),
-                      tooltip: "Document Storage",
-                      onPressed: () {},
-                    ),
-                    IconButton(
-                      icon: const Icon(CupertinoIcons.person_2),
-                      tooltip: "Authetication",
-                      onPressed: () {},
-                    ),
-                    IconButton(
-                      icon: const Icon(CupertinoIcons.graph_circle),
-                      tooltip: "Usage",
-                      onPressed: () {},
-                    ),
-                  ],
-                ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.storage_rounded),
+                    tooltip: "Realtime Database",
+                    onPressed: () => tabManager.addTab(Project(
+                      "New Realtime Database Monitor",
+                      ProjectType.realtimeDatabase,
+                    )),
+                  ),
+                  IconButton(
+                    icon: const Icon(CupertinoIcons.folder),
+                    tooltip: "Document Storage",
+                    onPressed: () {},
+                  ),
+                  IconButton(
+                    icon: const Icon(CupertinoIcons.person_2),
+                    tooltip: "Authetication",
+                    onPressed: () {},
+                  ),
+                  IconButton(
+                    icon: const Icon(CupertinoIcons.graph_circle),
+                    tooltip: "Usage",
+                    onPressed: () {},
+                  ),
+                ],
               ),
             ),
             const Divider(color: Colors.black),
