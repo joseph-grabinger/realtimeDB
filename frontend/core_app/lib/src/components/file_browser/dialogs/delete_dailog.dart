@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
+import '../file_browser_controller.dart';
+
 /// A dialog to delete a file or a folder and its contents.
 class DeleteDialog extends StatelessWidget {
   final String path;
@@ -14,7 +16,7 @@ class DeleteDialog extends StatelessWidget {
     required this.filename,
   }) : super(key: key);
 
-  final homeController = Get.find<HomeController>();
+  final controller = Get.find<FileBrowserController>();
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +96,7 @@ class DeleteDialog extends StatelessWidget {
                     color: Colors.red,
                     borderRadius: BorderRadius.circular(10),
                     onPressed: () async {
-                      await homeController.deleteFile(path, filename);
+                      await controller.fileStorage.deleteFile(path, filename);
                       Get.back();
                     },
                     child: const Text('Löschen'),

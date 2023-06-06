@@ -4,13 +4,15 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
+import 'package:filestorage_api/filestorage_api.dart';
+
 import 'package:get/get.dart';
 import 'package:pdfx/pdfx.dart';
 import 'package:cross_file/cross_file.dart';
 
+import 'file_browser_controller.dart';
 import '../others/back_text_button.dart';
 import '../others/popup_menu.dart';
-import 'model.dart';
 
 
 
@@ -21,6 +23,7 @@ class FileView extends StatefulWidget {
   final String filepath;
   final void Function(int)? onPopupSelected;
   final List<PopupMenuItem<int>>? popupChildren;
+  final bool isMobile;
 
   const FileView({
     Key? key,
@@ -28,6 +31,7 @@ class FileView extends StatefulWidget {
     required this.title,
     required this.type,
     required this.filepath,
+    required this.isMobile,
     this.onPopupSelected,
     this.popupChildren,
   }) : super(key: key);
@@ -37,8 +41,6 @@ class FileView extends StatefulWidget {
 }
 
 class _FileViewState extends State<FileView> {
-  final homeController = Get.find<HomeController>();
-
   final BoxDecoration backgroundDeco = const BoxDecoration(
     color: Colors.white,
   );
@@ -47,6 +49,8 @@ class _FileViewState extends State<FileView> {
 
   PdfControllerPinch? pdfControllerPinch;
   PdfController? pdfController;
+
+  final controller = Get.find<FileBrowserController>();
 
   void asyncInit() async {
     if (widget.file is Future) {
@@ -97,7 +101,7 @@ class _FileViewState extends State<FileView> {
           children: [
             Padding(
               padding: EdgeInsets.only(
-                  top: homeController.isMobile
+                  top: widget.isMobile
                       ? topViewPadding
                       : 50 + topViewPadding,
               ),
@@ -160,7 +164,7 @@ class _FileViewState extends State<FileView> {
               ),
               child: Padding(
                 padding: EdgeInsets.only(
-                  top: homeController.isMobile ? topViewPadding : 8.0,
+                  top: widget.isMobile ? topViewPadding : 8.0,
                   bottom: 8.0, left: 8.0, right: 8.0,
                 ),
                 child: Row(
@@ -192,7 +196,7 @@ class _FileViewState extends State<FileView> {
                             if (widget.onPopupSelected != null) {
                               widget.onPopupSelected!(value);
                             } else {
-                              homeController.defaultOnPopupSelected(value,
+                              controller.defaultOnPopupSelected(value,
                                 widget.filepath+widget.title.value, true,
                                 onDone: (int value, String? newTitle) {
                                   switch (value) {
@@ -210,7 +214,7 @@ class _FileViewState extends State<FileView> {
                                 });
                             }
                           },
-                          children: widget.popupChildren ?? homeController.defaultPopupItems.where(
+                          children: widget.popupChildren ?? controller.defaultPopupItems.where(
                                   (element) => element.value != 1).toList(),
                         ),
                       ),

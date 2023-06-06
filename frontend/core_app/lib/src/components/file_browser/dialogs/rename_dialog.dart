@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
+import '../file_browser_controller.dart';
+
 /// A dialog to rename a file or folder.
 class RenameDialog extends StatelessWidget {
   final String path;
@@ -31,14 +33,14 @@ class RenameDialog extends StatelessWidget {
     });
   }
 
-  final homeController = Get.find<HomeController>();
-
   late final TextEditingController textController;
   final FocusNode focusNode = FocusNode();
 
   bool firstSelection = true;
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  final controller = Get.find<FileBrowserController>();
 
   @override
   Widget build(BuildContext context) => Dialog(
@@ -55,7 +57,7 @@ class RenameDialog extends StatelessWidget {
         children: [
           Padding(
             padding: EdgeInsets.symmetric(
-              vertical: homeController.isMobile ? 0.0 : 8.0,
+              vertical: controller.isMobile ? 0.0 : 8.0,
               horizontal: 8.0,
             ),
             child: Row(
@@ -67,11 +69,11 @@ class RenameDialog extends StatelessWidget {
                       onPressed: () {
                         Get.back();
                       },
-                      child: const Text('Abbrechen', maxLines: 1),
+                      child: const Text('Cancel', maxLines: 1),
                     ),
                   ),
                 ),
-                const Text('Name wählen',
+                const Text('Select a name',
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
                 Expanded(
@@ -94,13 +96,13 @@ class RenameDialog extends StatelessWidget {
                         if (!isFile) {
                           name += '/';
                         }
-                        bool success = await homeController.renameFile(
+                        bool success = await controller.fileStorage.renameFile(
                             path.substring(1)+name, textController.text);
 
                         Navigator.of(context).pop(success ? textController.text : '');
 
                       },
-                      child: const Text('Fertig', maxLines: 1),
+                      child: const Text('Done', maxLines: 1),
                     ),
                   ),
                 ),
@@ -128,16 +130,16 @@ class RenameDialog extends StatelessWidget {
                       focusNode: focusNode,
                       validator: (String? value) {
                         if (value == null || value.isEmpty) {
-                          return 'Bitte einen Namen eingeben';
+                          return 'Please enter a name';
                         }
                         if (value.contains('/')) {
-                          return 'Der Name darf keine "/" enthalten';
+                          return 'Name can not contain "/" character';
                         }
                         if (value.contains('\\')) {
-                          return 'Der Name darf keine "\\" enthalten';
+                          return 'Name can not contain "\\" character';
                         }
                         if (value.contains('+')) {
-                          return 'Der Name darf keine "+" enthalten';
+                          return 'Name can not contain "+" character';
                         }
                         return null;
                       },

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
+import '../../others/custom_snackbar.dart';
+import '../file_browser_controller.dart';
+
 /// A dialog to add a folder.
 class AddFolderDialog extends StatelessWidget {
   final String path;
@@ -11,10 +14,10 @@ class AddFolderDialog extends StatelessWidget {
     required this.path,
   }) : super(key: key);
 
-  final homeController = Get.find<HomeController>();
-
   final TextEditingController textController = TextEditingController();
 
+  final controller = Get.find<FileBrowserController>();
+  
   @override
   Widget build(BuildContext context) => Dialog(
     insetPadding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -29,7 +32,7 @@ class AddFolderDialog extends StatelessWidget {
       child: Column(
         children: [
           Padding(
-            padding: !homeController.isMobile
+            padding: !controller.isMobile
                 ? const EdgeInsets.all(8.0)
                 : const EdgeInsets.only(left: 8.0, right: 8.0),
             child: Row(
@@ -41,11 +44,11 @@ class AddFolderDialog extends StatelessWidget {
                       onPressed: () {
                         Get.back();
                       },
-                      child: const Text('Abbrechen', maxLines: 1),
+                      child: const Text('Cancel', maxLines: 1),
                     ),
                   ),
                 ),
-                const Text('Neuer Ordner',
+                const Text('New Folder',
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
                 Expanded(
@@ -53,16 +56,16 @@ class AddFolderDialog extends StatelessWidget {
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () async {
-                        final bool success = await homeController.addFolder(
+                        final bool success = await controller.fileStorage.addFolder(
                             path, textController.text);
                         if (success) {
                           // returns the created folder name
                           Get.back(result: textController.text);
                         } else {
-                          showSnackbar('Fehler', 'Ordner konnte nicht erstellt werden!');
+                          showSnackbar('Error', 'Folder could not be created!');
                         }
                       },
-                      child: const Text('Fertig', maxLines: 1),
+                      child: const Text('Done', maxLines: 1),
                     ),
                   ),
                 ),
@@ -82,7 +85,7 @@ class AddFolderDialog extends StatelessWidget {
                     autofocus: true,
                     controller: textController,
                     decoration: InputDecoration(
-                      hintText: 'Unbenannt',
+                      hintText: 'Unnamed',
                       fillColor: Colors.grey[300],
                       filled: true,
                       focusColor: Colors.blue,

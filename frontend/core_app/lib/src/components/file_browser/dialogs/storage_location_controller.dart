@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
+import 'package:filestorage_api/filestorage_api.dart';
+
 import 'package:get/get.dart';
 
 import '../../others/app_expansion_tile.dart';
-import '../model.dart';
+import '../file_browser_controller.dart';
 
 
 class StorageLocationController extends GetxController {
-  final homeController = Get.find<HomeController>();
 
   final GlobalKey<AppExpansionTileState> departmentKey =
           GlobalKey<AppExpansionTileState>();
@@ -29,13 +30,15 @@ class StorageLocationController extends GetxController {
   void Function(Function())? personalTraySetState;
   void Function(Function())? departmentTraySetState;
 
+  final controller = Get.find<FileBrowserController>();
+
   @override
   void onInit() async {
     super.onInit();
 
-    await homeController.initCompleter.future;
+    await controller.initCompleter.future;
 
-    ownStruct = homeController.allStructure?.folders.firstWhere(
+    ownStruct = controller.allStructure?.folders.firstWhere(
             (element) => element.name == 'private_tray');
 
     initDone.value = true;

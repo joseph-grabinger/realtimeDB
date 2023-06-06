@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'package:filestorage_api/filestorage_api.dart';
+
 import 'package:get/get.dart';
 
 import '../../others/app_expansion_tile.dart';
-import '../model.dart';
 import 'add_folder_dialog.dart';
 import 'storage_location_controller.dart';
 
@@ -53,11 +54,11 @@ class StorageLocationDialog extends GetView<StorageLocationController> {
                         Get.back();
                         Get.delete<StorageLocationController>();
                       },
-                      child: const Text('Abbrechen', maxLines: 1),
+                      child: const Text('Cancel', maxLines: 1),
                     ),
                   ),
                 ),
-                const Text('Speicherort wählen',
+                const Text('Select storage location',
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
                 Expanded(
@@ -66,7 +67,7 @@ class StorageLocationDialog extends GetView<StorageLocationController> {
                     child: Obx(() => IconButton(
                       onPressed: () async {
                         String? result = await Get.dialog(AddFolderDialog(
-                          path: '/${controller.homeController.cleanPath(controller.path.value)}',
+                          path: '/${controller.path.value}',
                         ));
 
                         if (result != null) {
@@ -81,7 +82,7 @@ class StorageLocationDialog extends GetView<StorageLocationController> {
                             ? Colors.blue
                             : Colors.grey,
                       ),
-                      tooltip: 'Ordner erstellen',
+                      tooltip: 'Create folder',
                       splashRadius: 10,
                     )),
                   ),
@@ -166,7 +167,7 @@ class _FilesTreeViewState extends State<FilesTreeView> {
         : [];
     return AppExpansionTile(
       key: controller.personalKey,
-      title: widget.buildTitle('Dateien', Icons.folder_outlined),
+      title: widget.buildTitle('Files', Icons.folder_outlined),
       initiallyExpanded: controller.insertPath != null &&
           controller.insertPath!.startsWith('personal_tray'),
       onExpansionChanged: (bool expanded) {
@@ -187,7 +188,7 @@ class _FilesTreeViewState extends State<FilesTreeView> {
               parts.removeLast();
             }
           }
-          controller.path.value = parts.join('/') + '/';
+          controller.path.value = '${parts.join('/')}/';
         }
       },
       children: controller.initDone.value ? controller.ownStruct!.folders.map(
@@ -314,7 +315,7 @@ class _DirItemState extends State<DirItem> {
               parts.removeLast();
             }
           }
-          storageLocationController.path.value = parts.join('/') + '/';
+          storageLocationController.path.value = '${parts.join('/')}/';
         }
       },
       children: widget.dir.folders.map((e) {

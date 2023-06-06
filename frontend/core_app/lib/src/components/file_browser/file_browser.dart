@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:filestorage_api/filestorage_api.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,8 +13,9 @@ import 'package:pdfx/pdfx.dart';
 
 import '../others/popup_menu.dart';
 import 'dialogs/add_folder_dialog.dart';
+import 'dialogs/unsupported_type_dialog.dart';
 import 'file_browser_controller.dart';
-import 'model.dart';
+import 'file_view.dart';
 import 'utils.dart';
 
 
@@ -86,7 +88,7 @@ class FileBrowser extends StatelessWidget {
                                         child: Center(
                                           child: ClipRRect(
                                             borderRadius: BorderRadius.circular(10.0),
-                                            child: homeController.getNetworkImage(
+                                            child: controller.getNetworkImage(
                                                 controller.path.value+item.name, BoxFit.cover),
                                           ),
                                         ),
@@ -136,7 +138,7 @@ class FileBrowser extends StatelessWidget {
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                  child: item is FileM ? homeController.getFileIcon(item.name) : Container(),
+                                  child: item is FileM ? controller.getFileIcon(item.name) : Container(),
                                 ),
                                 Flexible(
                                   child: Text(
@@ -146,12 +148,12 @@ class FileBrowser extends StatelessWidget {
                                   ),
                                 ),
                                 PopupMenu(
-                                  onSelected: (int value) => homeController.defaultOnPopupSelected(
+                                  onSelected: (int value) => controller.defaultOnPopupSelected(
                                       value, controller.path.value+item.name, item is FileM),
                                   children: item is FileM
-                                      ? homeController.defaultPopupItems.where(
+                                      ? controller.defaultPopupItems.where(
                                           (element) => element.value != 1).toList()
-                                      : homeController.defaultPopupItems.where(
+                                      : controller.defaultPopupItems.where(
                                         (element) => element.value != 1 &&
                                         element.value != 5 &&
                                         element.value != 6,
@@ -180,7 +182,7 @@ class FileBrowser extends StatelessWidget {
                   onTap: () => onTap(dir),
                   leading: dir is FolderM
                       ? const Icon(Icons.folder)
-                      : homeController.getFileIcon(dir.name),
+                      : controller.getFileIcon(dir.name),
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -190,8 +192,8 @@ class FileBrowser extends StatelessWidget {
                         ),
                       ),
                       Text(isMobile
-                            ? homeController.formatDateShort(dir.modified)
-                            : homeController.formatDate(dir.modified),
+                            ? controller.formatDateShort(dir.modified)
+                            : controller.formatDate(dir.modified),
                         style: TextStyle(
                           color: Colors.grey[700],
                           fontSize: 15,
@@ -200,12 +202,12 @@ class FileBrowser extends StatelessWidget {
                     ],
                   ),
                   trailing: PopupMenu(
-                    onSelected: (int value) => homeController.defaultOnPopupSelected(
+                    onSelected: (int value) => controller.defaultOnPopupSelected(
                         value, controller.path.value+dir.name, dir is FileM),
                     children: dir is FileM
-                        ? homeController.defaultPopupItems.where(
+                        ? controller.defaultPopupItems.where(
                             (element) => element.value != 1).toList()
-                        : homeController.defaultPopupItems.where(
+                        : controller.defaultPopupItems.where(
                           (element) => element.value != 1 &&
                           element.value != 5 &&
                           element.value != 6,
@@ -221,7 +223,7 @@ class FileBrowser extends StatelessWidget {
   );
 
   Future<PdfPageImage?> getPDFThumbnail(item) async {
-    Uint8List internetFile = await homeController.getPDFInetFile(
+    Uint8List internetFile = await controller.getPDFInetFile(
         controller.path.value+item.name);
 
     if (internetFile.isEmpty) return null;
@@ -244,11 +246,11 @@ class FileBrowser extends StatelessWidget {
         case Type.pdf: {
           Get.dialog(FileView(
               file: !controller.gridView.value
-                  ? homeController.getPDFInetFile(controller.path.value+dir.name)
+                  ? controller.getPDFInetFile(controller.path.value+dir.name)
                   : controller.currentFiles[dir.name],
               title: RxString(dir.name),
               type: Type.pdf,
-              filepath: controller.path.value,
+              filepath: controller.path.value, isMobile: isMobile,
             ),
             useSafeArea: false,
           );
@@ -256,11 +258,12 @@ class FileBrowser extends StatelessWidget {
         break;
         case Type.image: {
           Get.dialog(FileView(
-              file: homeController.getNetworkImage(
+              file: controller.getNetworkImage(
                   controller.path.value+dir.name, BoxFit.cover),
               title: RxString(dir.name),
               type: Type.image,
               filepath: controller.path.value,
+              isMobile: isMobile,
             ),
             useSafeArea: false,
           );
@@ -309,7 +312,7 @@ class FileBrowser extends StatelessWidget {
 
     if (selectedValue == 0) {
       // Paste
-      await homeController.copyFile(clipboardPath!,
+      await controller.fileStorage.copyFile(clipboardPath!,
           controller.path.value.substring(1));
     } else {
       // New Folder
@@ -380,8 +383,8 @@ class FileBrowser extends StatelessWidget {
     child: Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (!homeController.isMobile) buildRefreshButton(),
-        if (!homeController.isMobile) const SizedBox(width: 8.0),
+        if (!isMobile) buildRefreshButton(),
+        if (!isMobile) const SizedBox(width: 8.0),
         IconButton(
           onPressed: () => controller.gridView.value = !controller.gridView.value,
           tooltip: 'Ansicht ändern',
@@ -397,7 +400,7 @@ class FileBrowser extends StatelessWidget {
   );
 
   Widget buildPlatformGestureListener({required BuildContext context, required Widget child}) {
-    if (homeController.isMobile) {
+    if (isMobile) {
       return GestureDetector(
         onLongPressStart: (LongPressStartDetails details) async {
           await onAltPressed(details.globalPosition, context);
