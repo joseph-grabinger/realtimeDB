@@ -1,13 +1,16 @@
+import 'package:filestorage_api/filestorage_api.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:realtime_api/realtime_api.dart';
 
+import '../models.dart';
+
 class RenameProjectDialog extends StatelessWidget {
-  final String name;
+  final Project project;
 
   RenameProjectDialog({
-    required this.name, 
+    required this.project, 
     super.key,
   });
 
@@ -94,9 +97,16 @@ class RenameProjectDialog extends StatelessWidget {
           onPressed: () {
             if (!_formKey.currentState!.validate()) return;
 
-            RealtimeDatabase.updateProject(name, newName!).then((_) {
-              Navigator.of(context).pop(newName);
-            });
+            if (project.type == ProjectType.realtimeDatabase) {
+              RealtimeDatabase.updateProject(project.name, newName!).then((_) {
+                Navigator.of(context).pop(newName);
+              });
+            } else if (project.type == ProjectType.fileStorage) {
+              // TODO 
+              // FileStorage.updateProject(project.name, newName!).then((_) {
+              //   Navigator.of(context).pop(newName);
+              // });
+            }
           },
           child: Container(
             width: 100,

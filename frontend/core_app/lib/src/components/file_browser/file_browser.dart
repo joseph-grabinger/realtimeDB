@@ -9,7 +9,7 @@ import 'package:flutter/services.dart';
 
 import 'package:get/get.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:pdfx/pdfx.dart';
+// import 'package:pdfx/pdfx.dart';
 
 import '../others/popup_menu.dart';
 import 'dialogs/add_folder_dialog.dart';
@@ -89,7 +89,7 @@ class FileBrowser extends StatelessWidget {
                                           child: ClipRRect(
                                             borderRadius: BorderRadius.circular(10.0),
                                             child: controller.getNetworkImage(
-                                                controller.path.value+item.name, BoxFit.cover),
+                                                controller.path+item.name, BoxFit.cover),
                                           ),
                                         ),
                                       );
@@ -97,27 +97,27 @@ class FileBrowser extends StatelessWidget {
                                     case Type.pdf: {
                                       return Padding(
                                         padding: const EdgeInsets.only(top:8.0),
-                                        child: FutureBuilder(
-                                          future: getPDFThumbnail(item),
-                                          builder: (BuildContext context, AsyncSnapshot snapshot) {
-                                            if (snapshot.hasData) {
-                                              return Image(
-                                                image: MemoryImage(snapshot.data.bytes),
-                                              );
-                                            } else if(snapshot.hasError) {
-                                              return const Center(
-                                                child: Icon(
-                                                  MdiIcons.filePngBox,
-                                                  color: Colors.green,
-                                                ),
-                                              );
-                                            } else {
-                                              return const Center(
-                                                child: CircularProgressIndicator(),
-                                              );
-                                            }
-                                          },
-                                        ),
+                                        // child: FutureBuilder(
+                                        //   future: getPDFThumbnail(item),
+                                        //   builder: (BuildContext context, AsyncSnapshot snapshot) {
+                                        //     if (snapshot.hasData) {
+                                        //       return Image(
+                                        //         image: MemoryImage(snapshot.data.bytes),
+                                        //       );
+                                        //     } else if(snapshot.hasError) {
+                                        //       return const Center(
+                                        //         child: Icon(
+                                        //           MdiIcons.filePngBox,
+                                        //           color: Colors.green,
+                                        //         ),
+                                        //       );
+                                        //     } else {
+                                        //       return const Center(
+                                        //         child: CircularProgressIndicator(),
+                                        //       );
+                                        //     }
+                                        //   },
+                                        // ),
                                       );
                                     }
                                     default: {
@@ -149,7 +149,7 @@ class FileBrowser extends StatelessWidget {
                                 ),
                                 PopupMenu(
                                   onSelected: (int value) => controller.defaultOnPopupSelected(
-                                      value, controller.path.value+item.name, item is FileM),
+                                      value, controller.path+item.name, item is FileM),
                                   children: item is FileM
                                       ? controller.defaultPopupItems.where(
                                           (element) => element.value != 1).toList()
@@ -169,7 +169,7 @@ class FileBrowser extends StatelessWidget {
                 ) : const Center(
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 28.0),
-                    child: Text('Dieses Verzeichnis ist leer.'),
+                    child: Text('This directory is empty.'),
                   ),
                 ),
               ),
@@ -203,7 +203,7 @@ class FileBrowser extends StatelessWidget {
                   ),
                   trailing: PopupMenu(
                     onSelected: (int value) => controller.defaultOnPopupSelected(
-                        value, controller.path.value+dir.name, dir is FileM),
+                        value, controller.path+dir.name, dir is FileM),
                     children: dir is FileM
                         ? controller.defaultPopupItems.where(
                             (element) => element.value != 1).toList()
@@ -222,20 +222,20 @@ class FileBrowser extends StatelessWidget {
     ],
   );
 
-  Future<PdfPageImage?> getPDFThumbnail(item) async {
-    Uint8List internetFile = await controller.getPDFInetFile(
-        controller.path.value+item.name);
+  // Future<PdfPageImage?> getPDFThumbnail(item) async {
+  //   Uint8List internetFile = await controller.getPDFInetFile(
+  //       controller.path.value+item.name);
 
-    if (internetFile.isEmpty) return null;
+  //   if (internetFile.isEmpty) return null;
 
-    controller.currentFiles[item.name] = internetFile;
-    final document = await PdfDocument.openData(internetFile);
-    final page = await document.getPage(1);
-    final pageImage = await page.render(width: page.width, height: page.height);
-    await page.close();
+  //   controller.currentFiles[item.name] = internetFile;
+  //   final document = await PdfDocument.openData(internetFile);
+  //   final page = await document.getPage(1);
+  //   final pageImage = await page.render(width: page.width, height: page.height);
+  //   await page.close();
 
-    return pageImage;
-  }
+  //   return pageImage;
+  // }
 
   /// Handles the tap on what could be a folder or a file.
   void onTap (dynamic dir) {
@@ -245,12 +245,10 @@ class FileBrowser extends StatelessWidget {
       switch(dir.type){
         case Type.pdf: {
           Get.dialog(FileView(
-              file: !controller.gridView.value
-                  ? controller.getPDFInetFile(controller.path.value+dir.name)
-                  : controller.currentFiles[dir.name],
+              file: controller.getPDFInetFile(controller.path+dir.name),
               title: RxString(dir.name),
               type: Type.pdf,
-              filepath: controller.path.value, isMobile: isMobile,
+              filepath: controller.path, isMobile: isMobile,
             ),
             useSafeArea: false,
           );
@@ -259,10 +257,10 @@ class FileBrowser extends StatelessWidget {
         case Type.image: {
           Get.dialog(FileView(
               file: controller.getNetworkImage(
-                  controller.path.value+dir.name, BoxFit.cover),
+                  controller.path+dir.name, BoxFit.cover),
               title: RxString(dir.name),
               type: Type.image,
-              filepath: controller.path.value,
+              filepath: controller.path,
               isMobile: isMobile,
             ),
             useSafeArea: false,
@@ -280,13 +278,13 @@ class FileBrowser extends StatelessWidget {
   /// e.g. a long press on mobile, and a right click on desktop.
   /// Shows a popup menu with options ant the provided [globalPosition].
   Future<void> onAltPressed(Offset globalPosition, BuildContext context) async {
-    final overlay = Overlay.of(context)?.context.findRenderObject() as RenderBox;
+    final overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
 
     final localOffset = overlay.globalToLocal(globalPosition);
 
     List<PopupMenuItem<int>> items = [
-      buildPopupMenuItem('Einfügen', Icons.content_paste, 0, false),
-      buildPopupMenuItem('Neuer Ordner', Icons.create_new_folder_rounded, 1, false),
+      buildPopupMenuItem('Paste', Icons.content_paste, 0, false),
+      buildPopupMenuItem('New folder', Icons.create_new_folder_rounded, 1, false),
     ];
 
     String? clipboardContent = (await Clipboard.getData(Clipboard.kTextPlain))!.text;
@@ -313,11 +311,11 @@ class FileBrowser extends StatelessWidget {
     if (selectedValue == 0) {
       // Paste
       await controller.fileStorage.copyFile(clipboardPath!,
-          controller.path.value.substring(1));
+          controller.path.substring(1));
     } else {
       // New Folder
       await Get.dialog(AddFolderDialog(
-        path: controller.path.value,
+        path: controller.path,
       ));
     }
     await controller.refreshStructure();
@@ -330,7 +328,7 @@ class FileBrowser extends StatelessWidget {
         Icon(Icons.chevron_left),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 5.0),
-          child: Text('Zurück'),
+          child: Text('Back'),
         ),
       ],
     ),
@@ -339,7 +337,7 @@ class FileBrowser extends StatelessWidget {
   Widget buildRefreshButton() => IconButton(
     icon: const Icon(Icons.refresh, color: Color(0xff888888)),
     splashRadius: 18.0,
-    tooltip: 'Aktualisieren',
+    tooltip: 'Refresh',
     onPressed: () async {
       await controller.refreshStructure();
     },
@@ -387,7 +385,7 @@ class FileBrowser extends StatelessWidget {
         if (!isMobile) const SizedBox(width: 8.0),
         IconButton(
           onPressed: () => controller.gridView.value = !controller.gridView.value,
-          tooltip: 'Ansicht ändern',
+          tooltip: 'Change view',
           splashRadius: 15,
           icon: Icon(controller.gridView.value
               ? Icons.view_list_outlined

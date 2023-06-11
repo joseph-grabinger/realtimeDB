@@ -24,23 +24,20 @@ import 'model.dart';
 class FileBrowserController extends GetxController
     with GetSingleTickerProviderStateMixin {
   final FileStorage fileStorage;
-  RxString path;
+  RxList<String> pathElements;
   FolderM? dirStructure;
-  bool isDepartment;
+  String projectName;
 
   FileBrowserController({
     required this.fileStorage,
-    required this.path,
-    required this.dirStructure,
-    this.isDepartment = false,
-  });
+    required this.projectName,
+  }) : pathElements = [projectName].obs;
 
   final bool isMobile = Platform.isIOS || Platform.isAndroid;
 
   NavStack stack = NavStack<FolderM?>();
 
   final RxList<dynamic> currentDir = [].obs;
-  final RxMap<String, dynamic> currentFiles = <String, dynamic>{}.obs;
   final RxBool isPush = false.obs;
   final RxBool descending = true.obs;
   final RxBool gridView = true.obs;
@@ -48,8 +45,6 @@ class FileBrowserController extends GetxController
   late AnimationController controller;
   late CurvedAnimation easeInAnimation;
   final Duration kExpand = const Duration(milliseconds: 250);
-
-  late final String ogPath;
 
   final List<PopupMenuItem<int>> defaultPopupItems = [
     buildPopupMenuItem('Copy', Icons.copy, 0, false),
@@ -63,10 +58,16 @@ class FileBrowserController extends GetxController
   FolderM? allStructure;
   final Completer initCompleter = Completer();
 
+  /// Path getter.
+  String get path => pathElements.join('/');
+
   @override
   void onInit() async {
+    controller = AnimationController(duration: kExpand, vsync: this);
+    easeInAnimation = CurvedAnimation(parent: controller, curve: Curves.easeIn);
+
     initCompleter.future;
-    allStructure = await fileStorage.getStructure('/');
+    allStructure = await fileStorage.getStructure(projectName);
     if (allStructure == null) {
       print("error on getting all structure");
       initCompleter.completeError("getStructure('/all') returned null");
@@ -74,9 +75,8 @@ class FileBrowserController extends GetxController
       initCompleter.complete();
     }
 
-    ogPath = path.value;
-    controller = AnimationController(duration: kExpand, vsync: this);
-    easeInAnimation = CurvedAnimation(parent: controller, curve: Curves.easeIn);
+    dirStructure = allStructure;
+
 
     if (dirStructure != null) {
       currentDir.addAll(dirStructure!.folders);
@@ -89,16 +89,15 @@ class FileBrowserController extends GetxController
     super.onInit();
   }
 
-  /// Pushes a given [dir] to the [stack] and updates the [currentDir].
+  /// Pushes a given [dir] to the [NavStack] and updates the [currentDir].
   void push(FolderM dir) {
     isPush.value = true;
-    currentFiles.clear();
     stack.push(dir);
     print("Pushed: ${dir.name}");
     currentDir.clear();
     currentDir.addAll(dir.folders);
     currentDir.addAll(dir.files);
-    path.value += '${dir.name}/';
+    pathElements.add(dir.name);
 
     if (descending.value) {
       currentDir.sort((a,b) => a.compareTo(b));
@@ -109,10 +108,9 @@ class FileBrowserController extends GetxController
     isPush.value = false;
   }
 
-  /// Pops a given [dir] of the [stack] and updates the [currentDir].
+  /// Pops an entry out of the [NavStack] and updates the [currentDir].
   void pop() {
     isPush.value = true;
-    currentFiles.clear();
     FolderM f = stack.pop();
     print("Popped: ${f.name}");
     FolderM dir = stack.peek;
@@ -126,65 +124,32 @@ class FileBrowserController extends GetxController
       currentDir.sort((a,b) => b.compareTo(a));
     }
 
-    if (ogPath != path.value) {
-      var parts = path.value.split('/');
-      parts.removeAt(parts.length-2);
-      path.value = parts.join('/');
-    }
-
     isPush.value = false;
   }
 
-  /// Refreshes the structure of the current directory based on the current [path].
-  /// The fetched structure then updates [homeController.allStructure],
-  /// is then pushed to the [stack] and the [currentDir] is updated.
+  /// Refreshes the structure of the current directory based on the current [pathElements].
+  /// The fetched structure that updates [allStructure],
+  /// is then pushed to the [NavStack] and the [currentDir] is updated.
   Future<void> refreshStructure() async {
-    currentFiles.clear();
-
     FolderM? dirStructure;
 
-    path.value = ogPath;
-
-    dirStructure = await fileStorage.getStructure(path.value);
+    print(path);
+    dirStructure = await fileStorage.getStructure(path);
 
     if (dirStructure == null) {
       print('StacError on Refresh');
       return;
     }
 
-    // replace the current path in allStructure with the new dirStructure
-    List<String> pathParts = path.value.split('/');
-    FolderM? currentAllStructure = allStructure;
-    if (pathParts[1] == 'department_tray') {
-      for (int i = 1; i < pathParts.length-1; i++) {
-        currentAllStructure = currentAllStructure!.folders.firstWhere(
-          (element) => element.name == pathParts[i],
-          orElse: () {
-            print("added to allStructure: ${pathParts[i]}");
-            FolderM folder = FolderM(name: pathParts[i], folders: [], files: [], modified: DateTime.now());
-            currentAllStructure!.folders.add(folder);
-            return folder;
-          },
-        );
-      }
-    } else {  // private_tray
-      currentAllStructure = currentAllStructure!.folders.firstWhere(
-              (element) => element.name == pathParts[pathParts.length-2]);
-    }
-    currentAllStructure!.folders = dirStructure.folders;
-    currentAllStructure.files = dirStructure.files;
-
-    // replace the stack with the new dirStructure
     FolderM? current = dirStructure;
 
     stack.list[0] = dirStructure;
 
     for (int i = 1; i < stack.list.length; i++) {
-      List<FolderM> dirs = current!.folders;
       print('Stack $i: ${stack.list[i].name}');
-      for(dynamic d in dirs) {
+      for(dynamic d in current!.folders) {
+        print('found: ${d.name}');
         if (d.name == stack.list[i].name) {
-          path.value += '${d.name}/';
           stack.list[i] = d;
           current = d;
         }
@@ -195,6 +160,7 @@ class FileBrowserController extends GetxController
     currentDir.addAll(current?.folders ?? []);
     currentDir.addAll(current?.files ?? []);
     currentDir.sort((a,b) => a.compareTo(b));
+    print('done');
   }
 
    /// Handles selection of all [defaultPopupItems].
@@ -248,6 +214,7 @@ class FileBrowserController extends GetxController
         // delete
         print("delete called with: $filepath");
         var parts = filepath.split('/');
+        print('parts: $parts');
         String filename = parts.removeLast();
         String path = '${parts.join('/')}/';
 
@@ -279,8 +246,7 @@ class FileBrowserController extends GetxController
     if (onDone != null) onDone(value, newTitle);
   }
 
-  /// Opens the provided [path] in the corresponding [FileBrowser],
-  /// by locating the [FileBrowserController].
+  /// Opens the provided [path].
   void openPath(String path) {
     List<String> pathParts = [];
     FolderM? current;
@@ -288,7 +254,7 @@ class FileBrowserController extends GetxController
     currentDir.clear();
     stack.list.clear();
     stack.push(dirStructure!);
-    this.path.value = ogPath;
+    pathElements.value = [projectName];
 
     pathParts = path.split('/');
     pathParts.removeRange(0, 4);
@@ -309,7 +275,7 @@ class FileBrowserController extends GetxController
         continue;
       }
       current = current!.folders.firstWhere(
-              (element) => element.name == s);
+        (element) => element.name == s);
       push(current);
     }
   }
@@ -376,7 +342,7 @@ class FileBrowserController extends GetxController
             Icon(Icons.error, size: 40),
             SizedBox(width: 10),
             Text(
-              'Fehler beim laden der Vorschau',
+              'Error while loading the preview.',
               maxLines: 2,
               textAlign: TextAlign.center,
             ),

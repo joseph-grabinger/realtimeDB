@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"log"
 	"mime/multipart"
 	"net/http"
 	"net/url"
@@ -156,6 +157,11 @@ func (h *FsHandlers) Copy(c *gin.Context) {
 func (h *FsHandlers) Delete(c *gin.Context) {
 	filepath := c.Query("filepath")
 
+	if filepath == "" {
+		c.JSON(400, gin.H{"error": "bad_request"})
+		return
+	}
+
 	if err := h.storage.Delete(filepath); err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -189,6 +195,8 @@ func (h *FsHandlers) GetStructure(c *gin.Context) {
 		return
 	}
 
+	log.Println(encodedPath)
+
 	tree, err := h.storage.GetStructure(encodedPath)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
@@ -200,4 +208,6 @@ func (h *FsHandlers) GetStructure(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	c.JSON(http.StatusOK, obj)
 }

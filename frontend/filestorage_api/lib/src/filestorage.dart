@@ -27,7 +27,7 @@ class FileStorage {
   Dio? dioClient;
 
   void init() {
-    dioClient = Dio(BaseOptions(baseUrl: projectUrl));
+    dioClient = Dio(BaseOptions(baseUrl: baseUrl));
   }
 
   /// Returns a List of all projects in the storage.
@@ -42,6 +42,8 @@ class FileStorage {
     }
     return [];
   }
+
+
   /// Uploads files to the storage.
   Future<void> uploadFiles(List<XFile> files, path) async {
     for (XFile file in files) {
@@ -65,7 +67,7 @@ class FileStorage {
     try {
       final res = await dioClient!.get('/get_structure/',
         queryParameters: {
-          'path': path.substring(1), // remove leading slash
+          'path': path,
         });
 
       FolderM dir = FolderM.fromJson(res.data ?? {});
@@ -79,9 +81,9 @@ class FileStorage {
   /// Moves a file from [source] to [destination] in the storage.
   Future<void> moveFile(String filename, String source, String destination) async {
     try {
-      final res = await dioClient!.put('/move', data: {
+      final res = await dioClient!.put('/move', queryParameters: {
         'filename': filename,
-        'source': source.substring(1), // remove leading slash
+        'source': source,
         'destination': destination,
       });
       if (res.statusCode != 200) debugPrint('Move failed!');
@@ -93,8 +95,8 @@ class FileStorage {
   /// Copies a file from [source] to [destination] in the storage.
   Future<void> copyFile(String source, String destination) async {
     try {
-      final res = await dioClient!.put('/copy', data: {
-        'source': source.substring(1), // remove leading slash
+      final res = await dioClient!.put('/copy', queryParameters: {
+        'source': source,
         'destination': destination,
       });
       if (res.statusCode != 200) debugPrint('Copy failed!');
@@ -106,8 +108,8 @@ class FileStorage {
   /// Renames a file in the storage.
   Future<bool> renameFile(String filepath, String newName) async {
     try {
-      final res = await dioClient!.put('/rename', data: {
-        'filepath':  filepath,
+      final res = await dioClient!.put('/rename', queryParameters: {
+        'filepath': filepath,
         'new_name': newName,
       });
       if (res.statusCode == 200) return true;
@@ -119,9 +121,10 @@ class FileStorage {
 
   /// Deletes a file from the storage.
   Future<void> deleteFile(String path, String filename) async {
+    print('deleting: ${path + filename}');
     try {
-      final res = await dioClient!.delete('/delete', data: {
-        'filepath': path.substring(1) + filename,
+      final res = await dioClient!.delete('/delete', queryParameters: {
+        'filepath': path + filename,
       });
       if (res.statusCode != 200) debugPrint('Delete failed!');
     } on DioError {
@@ -132,8 +135,8 @@ class FileStorage {
   /// Adds a folder to the storage.
   Future<bool> addFolder(String path, String name) async {
     try {
-      final res = await dioClient!.post('/share/add_folder', data: {
-        'path': path.substring(1), // remove leading slash
+      final res = await dioClient!.post('/add_folder', queryParameters: {
+        'path': path,
         'name': name,
       });
       if (res.statusCode == 201) return true;

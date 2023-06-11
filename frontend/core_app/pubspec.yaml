@@ -23,11 +23,11 @@ dependencies:
   file_picker: ^5.2.10
   get: ^4.6.5
   material_design_icons_flutter: ^6.0.7096
-  pdfx: ^2.0.1+2
   cross_file: ^0.3.3+4
   intl: ^0.18.1
   internet_file: ^1.0.0+2
   path_provider: ^2.0.15
+  photo_view: ^0.14.0
 
 dev_dependencies:
   flutter_test:

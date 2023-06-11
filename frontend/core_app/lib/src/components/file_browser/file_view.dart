@@ -7,8 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:filestorage_api/filestorage_api.dart';
 
 import 'package:get/get.dart';
-import 'package:pdfx/pdfx.dart';
+// import 'package:pdfx/pdfx.dart';
 import 'package:cross_file/cross_file.dart';
+import 'package:photo_view/photo_view.dart';
 
 import 'file_browser_controller.dart';
 import '../others/back_text_button.dart';
@@ -47,8 +48,8 @@ class _FileViewState extends State<FileView> {
 
   final RxBool _isLoading = true.obs;
 
-  PdfControllerPinch? pdfControllerPinch;
-  PdfController? pdfController;
+  // PdfControllerPinch? pdfControllerPinch;
+  // PdfController? pdfController;
 
   final controller = Get.find<FileBrowserController>();
 
@@ -60,15 +61,15 @@ class _FileViewState extends State<FileView> {
     if (widget.file is Uint8List && (widget.file as Uint8List).isEmpty) return;
 
     if (widget.type == Type.pdf) {
-      if (!Platform.isWindows) {
-        pdfControllerPinch = PdfControllerPinch(
-          document: PdfDocument.openData(widget.file),
-        );
-      } else {
-        pdfController = PdfController(
-          document: PdfDocument.openData(widget.file),
-        );
-      }
+      // if (!Platform.isWindows) {
+      //   pdfControllerPinch = PdfControllerPinch(
+      //     document: PdfDocument.openData(widget.file),
+      //   );
+      // } else {
+      //   pdfController = PdfController(
+      //     document: PdfDocument.openData(widget.file),
+      //   );
+      // }
 
     }
     _isLoading.value = false;
@@ -82,8 +83,8 @@ class _FileViewState extends State<FileView> {
 
   @override
   void dispose() {
-    pdfControllerPinch?.dispose();
-    pdfController?.dispose();
+    // pdfControllerPinch?.dispose();
+    // pdfController?.dispose();
     super.dispose();
   }
 
@@ -108,31 +109,31 @@ class _FileViewState extends State<FileView> {
               child: Obx(() => !_isLoading.value ? Builder(
                 builder: (BuildContext context) {
                   switch (widget.type) {
-                    case Type.pdf: {
-                      if (!Platform.isWindows) {
-                        return PdfViewPinch(
-                          controller: pdfControllerPinch!,
-                          scrollDirection: Axis.vertical,
-                          backgroundDecoration: backgroundDeco,
-                          builders: const PdfViewPinchBuilders<DefaultBuilderOptions>(
-                            options: DefaultBuilderOptions(
-                              loaderSwitchDuration: Duration(milliseconds: 100),
-                            ),
-                          ),
-                        );
-                      } else {
-                        return PdfView(
-                          controller: pdfController!,
-                          scrollDirection: Axis.vertical,
-                          backgroundDecoration: backgroundDeco,
-                          builders: const PdfViewBuilders<DefaultBuilderOptions>(
-                            options: DefaultBuilderOptions(
-                              loaderSwitchDuration: Duration(milliseconds: 100),
-                            ),
-                          ),
-                        );
-                      }
-                    }
+                    // case Type.pdf: {
+                    //   if (!Platform.isWindows) {
+                    //     return PdfViewPinch(
+                    //       controller: pdfControllerPinch!,
+                    //       scrollDirection: Axis.vertical,
+                    //       backgroundDecoration: backgroundDeco,
+                    //       builders: const PdfViewPinchBuilders<DefaultBuilderOptions>(
+                    //         options: DefaultBuilderOptions(
+                    //           loaderSwitchDuration: Duration(milliseconds: 100),
+                    //         ),
+                    //       ),
+                    //     );
+                    //   } else {
+                    //     return PdfView(
+                    //       controller: pdfController!,
+                    //       scrollDirection: Axis.vertical,
+                    //       backgroundDecoration: backgroundDeco,
+                    //       builders: const PdfViewBuilders<DefaultBuilderOptions>(
+                    //         options: DefaultBuilderOptions(
+                    //           loaderSwitchDuration: Duration(milliseconds: 100),
+                    //         ),
+                    //       ),
+                    //     );
+                    //   }
+                    // }
                     case Type.image: {
                       return PhotoView(
                         imageProvider: widget.file is XFile

@@ -39,15 +39,13 @@ class DeleteDialog extends StatelessWidget {
               Row(
                 children: [
                   const Expanded(
-                    child: Text('Daten löschen',
+                    child: Text('Delete data',
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
                   ),
                   IconButton(
                     splashRadius: 20,
-                    onPressed: () {
-                      Get.back();
-                    },
+                    onPressed: Get.back,
                     icon: const Icon(CupertinoIcons.xmark),
                   ),
                 ],
@@ -60,7 +58,7 @@ class DeleteDialog extends StatelessWidget {
                     Icon(Icons.warning, color: Colors.red[700]),
                     const SizedBox(width: 8.0),
                     Expanded(
-                      child: Text('Alle Daten an diesem Speicherort werden endgültig gelöscht!',
+                      child: Text('All data in this location will be permanently deleted!',
                         maxLines: 2,
                         style: TextStyle(color: Colors.red[700]),
                       ),
@@ -74,7 +72,7 @@ class DeleteDialog extends StatelessWidget {
               ),
               Text(filename),
               const SizedBox(height: 8.0),
-              const Text('Speicherort der Daten:',
+              const Text('Location of data:',
                 style: TextStyle(color: Colors.grey),
               ),
               Text(path),
@@ -83,8 +81,8 @@ class DeleteDialog extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   CupertinoButton(
-                    onPressed: () => Get.back(),
-                    child: const Text('Abbrechen',
+                    onPressed: Get.back,
+                    child: const Text('Cancel',
                       style: TextStyle(color: Colors.grey),
                     ),
                   ),
@@ -99,7 +97,7 @@ class DeleteDialog extends StatelessWidget {
                       await controller.fileStorage.deleteFile(path, filename);
                       Get.back();
                     },
-                    child: const Text('Löschen'),
+                    child: const Text('Delete'),
                   ),
                 ],
               ),

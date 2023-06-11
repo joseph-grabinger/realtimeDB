@@ -2,16 +2,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:realtime_api/realtime_api.dart';
+import 'package:filestorage_api/filestorage_api.dart';
 
 class DeleteProjectDialog extends StatelessWidget {
-  final DatabaseReference dbRef;
+  final DatabaseReference? dbRef;
+  final FileStorage? fs;
   final String name;
 
   const DeleteProjectDialog({
     required this.dbRef,
+    required this.fs,
     required this.name,
     super.key,
-  });
+  }) : assert(dbRef != null || fs != null);
 
   @override
   Widget build(BuildContext context) {

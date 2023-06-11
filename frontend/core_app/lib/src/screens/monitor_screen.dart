@@ -1,11 +1,17 @@
+import 'dart:async';
+
+import 'package:core_app/src/components/file_browser/file_browser.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'package:realtime_api/realtime_api.dart';
+import 'package:filestorage_api/filestorage_api.dart';
 
 import '../models.dart';
 import '../tab_manager.dart';
-import '../components/json_visualizer/json_visualizer.dart';
 import '../components/others/popup_menu.dart';
+import '../components/json_visualizer/json_visualizer.dart';
+import '../components/file_browser/file_browser_controller.dart';
 import '../dialogs/delete_project_dialog.dart';
 import '../dialogs/rename_project_dialog.dart';
 
@@ -17,7 +23,7 @@ class MonitorScreen extends StatefulWidget {
   const MonitorScreen({
     required this.project,
     required this.tabManager,
-    super.key, required,
+    super.key,
   });
 
   @override
@@ -26,12 +32,25 @@ class MonitorScreen extends StatefulWidget {
 
 class _MonitorScreenState extends State<MonitorScreen> {
   RealtimeDatabase? rdb;
+  FileStorage? fs;
+  FileBrowserController? browserController;
+
+  final Completer initCompleter = Completer();
 
   @override
   void initState() {
     super.initState();
 
-    rdb = RealtimeDatabase(widget.project.name);
+    if (widget.project.type == ProjectType.realtimeDatabase) {
+      rdb = RealtimeDatabase(widget.project.name);
+    } else if (widget.project.type == ProjectType.fileStorage) {
+      fs = FileStorage(widget.project.name);
+
+      Get.put(FileBrowserController(projectName: widget.project.name, fileStorage: fs!,));
+      browserController = Get.find<FileBrowserController>();
+      initCompleter.complete();
+    }
+
   }
   @override
   Widget build(BuildContext context) {
@@ -55,7 +74,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
                   String? newName = await showDialog(
                     context: context,
                     builder: (context) => RenameProjectDialog(
-                      name: widget.project.name,
+                      project: widget.project,
                     ),
                   );
 
@@ -68,7 +87,8 @@ class _MonitorScreenState extends State<MonitorScreen> {
                   bool result = await showDialog(
                     context: context,
                     builder: (context) => DeleteProjectDialog(
-                      dbRef: rdb!.reference(),
+                      dbRef: rdb?.reference(),
+                      fs: fs,
                       name: widget.project.name,
                     ),
                   );
@@ -93,6 +113,22 @@ class _MonitorScreenState extends State<MonitorScreen> {
                 );
               },
           ),
+        ) : Container(),
+        fs != null ? Expanded(
+          child: FutureBuilder(
+          future: initCompleter.future,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return FileBrowser(
+                controller: browserController!,
+              );
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
+        ),
         ) : Container(),
       ],
     );
